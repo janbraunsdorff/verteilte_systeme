@@ -27,11 +27,11 @@ public class Player {
     }
 
     public boolean findFirstRandomInNet() {
-        for (int i = config.getFromPort(); i <= config.getToPort(); i++) {
-            if (i == config.getMyPort()) continue;
+        for (int portNumber = config.getFromPort(); portNumber <= config.getToPort(); portNumber++) {
+            if (portNumber == config.getMyPort()) continue;
 
             RestTemplate restTemplate = new RestTemplate();
-            String url = "http://localhost:" + i + "/online";
+            String url = "http://localhost:" + portNumber + "/online";
             System.out.print("Try: " + url + " -> ");
 
             try {
@@ -39,7 +39,7 @@ public class Player {
                 ResponseEntity<PeerList> response = restTemplate.postForEntity(url, request, PeerList.class);
                 System.out.println(response.getStatusCode() + "   " + response.getBody());
                 this.repo.addPeer(Objects.requireNonNull(response.getBody()).getPeerList());
-                this.repo.addPeer(new Peer(i, LocalDateTime.now()));
+                this.repo.addPeer(new Peer(portNumber, LocalDateTime.now()));
                 return true;
             } catch (RestClientException ex) {
                 System.out.println("---");
