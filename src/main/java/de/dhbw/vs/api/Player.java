@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-
 @Service
 public class Player {
 
