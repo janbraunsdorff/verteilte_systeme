@@ -115,6 +115,7 @@ public class GameField implements GameInterface {
             }
         }
 
+        // check rows for winner
         for (int i = 0; i < field[0].length; i++) {
 
             numberOfConsecutiveSquares = 0;
@@ -140,6 +141,9 @@ public class GameField implements GameInterface {
                 }
             }
         }
+
+        // TODO: check diagonals for winner
+        // 0,2 - 3,5 ; 0,1 - 4,5 ; 0,0 - 5,5 ; 1,0 - 6,5 ; 2,0 - 6,4 ; 3,0 - 6,3
 
     }
 
