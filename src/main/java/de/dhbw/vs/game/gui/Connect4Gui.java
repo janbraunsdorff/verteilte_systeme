@@ -6,12 +6,12 @@ import de.dhbw.vs.game.logic.Square;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
+import java.util.List;
 
 public class Connect4Gui extends JFrame {
-    private GameInterface game;
-    private JLabel stateText = new JLabel("Running");
-    private JPanel[][] gameField = new JPanel[7][6];
+    private final GameInterface game;
+    private final JLabel stateText = new JLabel();
+    private final JPanel[][] gameField = new JPanel[7][6];
 
     public Connect4Gui(GameInterface game) {
         this.game = game;
@@ -69,5 +69,11 @@ public class Connect4Gui extends JFrame {
             }
         }
         this.stateText.setText(game.getStatus().toString());
+    }
+
+    public void displayWinner(List<int[]> winningSquares) {
+        for(int[] squarePosition : winningSquares) {
+            gameField[squarePosition[0]][squarePosition[1]].setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 5));
+        }
     }
 }

@@ -3,6 +3,9 @@ package de.dhbw.vs.game.logic;
 import de.dhbw.vs.game.gui.Connect4Gui;
 import de.dhbw.vs.game.network.NetworkInterface;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameField implements GameInterface {
     private final Square[][] field = new Square[7][6];
     private final NetworkInterface network;
@@ -42,7 +45,7 @@ public class GameField implements GameInterface {
 
     @Override
     public void executeInternMove(Move move) {
-        if(status.equals(Status.WAITING))
+        if (status.equals(Status.WAITING))
             return;
 
         executeMove(move);
@@ -73,14 +76,76 @@ public class GameField implements GameInterface {
     public boolean moveIsPossible(Move move) {
         Square[] column = field[move.getColumnNumber()];
 
-        for(Square square : column) {
-            if(square.getSquareState().equals(SquareState.EMPTY))
+        for (Square square : column) {
+            if (square.getSquareState().equals(SquareState.EMPTY))
                 return true;
         }
         return false;
     }
 
     public void checkForWinner() {
+        List<int[]> winningSquares = new ArrayList<>();
+        int numberOfConsecutiveSquares;
+        SquareState latestConsecutiveSquareState = SquareState.EMPTY;
+
+        // check columns for winner
+        for (int i = 0; i < field.length; i++) {
+
+            numberOfConsecutiveSquares = 0;
+
+            for (int j = 0; j < field[i].length; j++) {
+
+                SquareState squareState = field[i][j].getSquareState();
+                //SquareState squareState = square.getSquareState();
+
+                if (!squareState.equals(SquareState.EMPTY) && squareState.equals(latestConsecutiveSquareState)) {
+                    numberOfConsecutiveSquares++;
+                    winningSquares.add(new int[]{i, j});
+                } else {
+                    numberOfConsecutiveSquares = 1;
+                    winningSquares = new ArrayList<>();
+                    winningSquares.add(new int[]{i, j});
+                    latestConsecutiveSquareState = squareState;
+                }
+
+                if (numberOfConsecutiveSquares >= 4) {
+                    winnerDetected(winningSquares, latestConsecutiveSquareState);
+                    return;
+                }
+            }
+        }
+
+        for (int i = 0; i < field[0].length; i++) {
+
+            numberOfConsecutiveSquares = 0;
+
+            for (int j = 0; j < field.length; j++) {
+
+                SquareState squareState = field[j][i].getSquareState();
+                //SquareState squareState = square.getSquareState();
+
+                if (!squareState.equals(SquareState.EMPTY) && squareState.equals(latestConsecutiveSquareState)) {
+                    numberOfConsecutiveSquares++;
+                    winningSquares.add(new int[]{j, i});
+                } else {
+                    numberOfConsecutiveSquares = 1;
+                    winningSquares = new ArrayList<>();
+                    winningSquares.add(new int[]{j, i});
+                    latestConsecutiveSquareState = squareState;
+                }
+
+                if (numberOfConsecutiveSquares >= 4) {
+                    winnerDetected(winningSquares, latestConsecutiveSquareState);
+                    return;
+                }
+            }
+        }
+
+    }
+
+    private void winnerDetected(List<int[]> winningSquares, SquareState latestConsecutiveSquareState) {
+        gui.displayWinner(winningSquares);
+        System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
     }
 
 }
