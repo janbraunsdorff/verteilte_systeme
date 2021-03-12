@@ -1,4 +1,4 @@
-package de.dhbw.vs.game;
+package de.dhbw.vs.game.logic;
 
 public class Square {
     private SquareState squareState;
