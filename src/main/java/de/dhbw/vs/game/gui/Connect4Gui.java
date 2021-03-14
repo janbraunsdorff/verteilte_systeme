@@ -25,7 +25,7 @@ public class Connect4Gui extends JFrame {
         this.setLayout(new BorderLayout());
         JPanel statusPanel = new JPanel();
         statusPanel.add(stateText);
-        this.stateText.setText(game.getStatus().toString());
+        this.stateText.setText(game.getPlayer().toString() + ", " + game.getStatus().toString());
         this.add(stateText, BorderLayout.NORTH);
 
         JPanel gamePanel = new JPanel();
@@ -68,12 +68,12 @@ public class Connect4Gui extends JFrame {
                 panel.setBackground(field[i][j].getSquareState().getColor());
             }
         }
-        this.stateText.setText(game.getStatus().toString());
+        this.stateText.setText(game.getPlayer().toString() + ", " + game.getStatus().toString());
     }
 
     public void displayWinner(List<int[]> winningSquares) {
         for(int[] squarePosition : winningSquares) {
-            gameField[squarePosition[0]][squarePosition[1]].setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 5));
+            gameField[squarePosition[0]][squarePosition[1]].setBorder(BorderFactory.createLineBorder(Color.GREEN, 5));
         }
     }
 }

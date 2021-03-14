@@ -25,6 +25,11 @@ public class Network implements NetworkInterface{
     }
 
     public static void main(String[] args) {
-        new Network();
+        Network network = new Network();
+
+
+
     }
+
+
 }

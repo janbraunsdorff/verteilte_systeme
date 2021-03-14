@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameField implements GameInterface {
+    // X, Y
     private final Square[][] field = new Square[7][6];
     private final NetworkInterface network;
     private final Player player;
@@ -29,6 +30,9 @@ public class GameField implements GameInterface {
     public Status getStatus() {
         return status;
     }
+
+    @Override
+    public Player getPlayer() {return player;}
 
     @Override
     public void executeExternMove(Move move) {
@@ -142,9 +146,107 @@ public class GameField implements GameInterface {
             }
         }
 
-        // TODO: check diagonals for winner
-        // 0,2 - 3,5 ; 0,1 - 4,5 ; 0,0 - 5,5 ; 1,0 - 6,5 ; 2,0 - 6,4 ; 3,0 - 6,3
+        checkDiagonalDownUp();
+        checkDiagonalUpDown();
 
+    }
+
+    private static class Diagonal {
+        int x1;
+        int y1;
+        int x2;
+        int y2;
+
+        public Diagonal(int x1, int y1, int x2, int y2) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+        }
+    }
+
+    private void checkDiagonalDownUp() {
+        SquareState latestConsecutiveSquareState = SquareState.EMPTY;
+        List<int[]> winningSquares = new ArrayList<>();
+
+        List<Diagonal> cord = new ArrayList<Diagonal>();
+        cord.add(new Diagonal(0, 2, 3, 5));
+        cord.add(new Diagonal(0, 1, 4, 5));
+        cord.add(new Diagonal(0, 0, 5, 5));
+        cord.add(new Diagonal(1, 0, 6, 5));
+        cord.add(new Diagonal(2, 0, 6, 4));
+        cord.add(new Diagonal(3, 0, 6, 3));
+
+
+        for (Diagonal dig : cord) {
+            int x = dig.x1;
+            int y = dig.y1;
+            int numberOfConsecutiveSquares = 0;
+
+            while (y <= dig.y2 && x <= dig.x2) {
+
+                SquareState squareState = field[x][y].getSquareState();
+                System.out.println(squareState.toString());
+                if (!squareState.equals(SquareState.EMPTY) && squareState.equals(latestConsecutiveSquareState)) {
+                    numberOfConsecutiveSquares++;
+                    winningSquares.add(new int[]{x, y});
+                } else {
+                    numberOfConsecutiveSquares = 1;
+                    winningSquares = new ArrayList<>();
+                    winningSquares.add(new int[]{x, y});
+                    latestConsecutiveSquareState = squareState;
+                }
+
+                if (numberOfConsecutiveSquares >= 4) {
+                    winnerDetected(winningSquares, latestConsecutiveSquareState);
+                    return;
+                }
+                x++;
+                y++;
+            }
+        }
+    }
+
+    private void checkDiagonalUpDown() {
+        SquareState latestConsecutiveSquareState = SquareState.EMPTY;
+        List<int[]> winningSquares = new ArrayList<>();
+
+        List<Diagonal> cord = new ArrayList<Diagonal>();
+        cord.add(new Diagonal(3,5,6,2));
+        cord.add(new Diagonal(2,5, 6,1));
+        cord.add(new Diagonal(1,5, 6,0));
+        cord.add(new Diagonal(0,5, 5,0));
+        cord.add(new Diagonal(0,4, 4,0));
+        cord.add(new Diagonal(0, 3, 3, 0));
+
+
+        for (Diagonal dig : cord) {
+            int x = dig.x1;
+            int y = dig.y1;
+            int numberOfConsecutiveSquares = 0;
+
+            while (y >= dig.y2 && x <= dig.x2) {
+
+                SquareState squareState = field[x][y].getSquareState();
+                System.out.println(squareState.toString());
+                if (!squareState.equals(SquareState.EMPTY) && squareState.equals(latestConsecutiveSquareState)) {
+                    numberOfConsecutiveSquares++;
+                    winningSquares.add(new int[]{x, y});
+                } else {
+                    numberOfConsecutiveSquares = 1;
+                    winningSquares = new ArrayList<>();
+                    winningSquares.add(new int[]{x, y});
+                    latestConsecutiveSquareState = squareState;
+                }
+
+                if (numberOfConsecutiveSquares >= 4) {
+                    winnerDetected(winningSquares, latestConsecutiveSquareState);
+                    return;
+                }
+                x++;
+                y--;
+            }
+        }
     }
 
     private void winnerDetected(List<int[]> winningSquares, SquareState latestConsecutiveSquareState) {
