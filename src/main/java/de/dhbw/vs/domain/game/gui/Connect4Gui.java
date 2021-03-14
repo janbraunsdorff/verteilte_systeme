@@ -1,8 +1,8 @@
-package de.dhbw.vs.game.gui;
+package de.dhbw.vs.domain.game.gui;
 
-import de.dhbw.vs.game.logic.GameInterface;
-import de.dhbw.vs.game.logic.Move;
-import de.dhbw.vs.game.logic.Square;
+import de.dhbw.vs.domain.game.logic.GameInterface;
+import de.dhbw.vs.domain.game.logic.Move;
+import de.dhbw.vs.domain.game.logic.Square;
 
 import javax.swing.*;
 import java.awt.*;

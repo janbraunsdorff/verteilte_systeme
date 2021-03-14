@@ -1,0 +1,41 @@
+# Finde den Einstieg
+@startuml
+group Entry the Network
+
+Actor "Alice \n Port 1"
+participant "Port 2"
+participant "Port 3"
+Actor "Bob \n Port 4"
+
+
+"Alice \n Port 1" ->x "Port 2" : Hello?
+"Alice \n Port 1" ->x "Port 3" : Hello?
+
+"Alice \n Port 1" -> "Bob \n Port 4" : Hello?
+activate "Bob \n Port 4"
+"Alice \n Port 1" <- "Bob \n Port 4" : I know these peers
+deactivate "Bob \n Port 4"
+
+@enduml
+
+# Finde einen Partner zum spielen
+
+@startuml
+Actor "Alice \n Port 1"
+Actor "Bob \n Port 2"
+Actor "Charlie \n Port 3"
+Actor "Dave \n Port 3"
+
+"Alice \n Port 1" -> "Bob \n Port 2" : wanna play?
+"Alice \n Port 1" -> "Charlie \n Port 3" : wanna play?
+"Alice \n Port 1" ->  "Dave \n Port 3" : wanna play?
+
+"Alice \n Port 1" <- "Bob \n Port 2" : Yes!
+"Alice \n Port 1" <- "Charlie \n Port 3" : Yes!
+"Alice \n Port 1" -> "Charlie \n Port 3" : Sorry to late
+"Alice \n Port 1" <-  "Dave \n Port 3": Yes!
+"Alice \n Port 1" ->  "Dave \n Port 3": Sorry to late
+
+"Alice \n Port 1" -> "Bob \n Port 2" : First Move
+
+@enduml

@@ -1,7 +1,7 @@
-package de.dhbw.vs.game.network;
+package de.dhbw.vs.domain.game.network;
 
-import de.dhbw.vs.game.logic.GameField;
-import de.dhbw.vs.game.logic.Move;
+import de.dhbw.vs.domain.game.logic.GameField;
+import de.dhbw.vs.domain.game.logic.Move;
 
 public class Network implements NetworkInterface{
     private GameField game1 = new GameField(this, true);

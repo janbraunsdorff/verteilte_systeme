@@ -1,10 +1,13 @@
-package de.dhbw.vs.game.logic;
+package de.dhbw.vs.domain.game.logic;
 
 public class Move {
-    private final int columnNumber;
+    private int columnNumber;
 
     public Move(int columnNumber) {
         this.columnNumber = columnNumber;
+    }
+
+    public Move() {
     }
 
     public int getColumnNumber() {

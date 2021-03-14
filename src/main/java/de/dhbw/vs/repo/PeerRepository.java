@@ -4,8 +4,10 @@ import de.dhbw.vs.Config;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PeerRepository {
@@ -43,8 +45,15 @@ public class PeerRepository {
         this.peers.values().forEach(a -> System.out.println("[" + myPort + "] -> " + a));
     }
 
-
-    public List<Peer> getValues() {
+    public List<Peer> getPeerList() {
         return new ArrayList<>(this.peers.values());
+    }
+
+    public List<Integer> getNextPeersToPlay(int numberOfPeersToAsk) {
+        return this.peers.values().stream()
+                .sorted(Comparator.comparing(Peer::getLastUpdated))
+                .limit(numberOfPeersToAsk)
+                .map(Peer::getPort)
+                .collect(Collectors.toList());
     }
 }

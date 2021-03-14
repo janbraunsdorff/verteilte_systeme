@@ -1,7 +1,7 @@
-package de.dhbw.vs.game.logic;
+package de.dhbw.vs.domain.game.logic;
 
-import de.dhbw.vs.game.gui.Connect4Gui;
-import de.dhbw.vs.game.network.NetworkInterface;
+import de.dhbw.vs.domain.game.gui.Connect4Gui;
+import de.dhbw.vs.domain.game.network.NetworkInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,7 +186,6 @@ public class GameField implements GameInterface {
             while (y <= dig.y2 && x <= dig.x2) {
 
                 SquareState squareState = field[x][y].getSquareState();
-                System.out.println(squareState.toString());
                 if (!squareState.equals(SquareState.EMPTY) && squareState.equals(latestConsecutiveSquareState)) {
                     numberOfConsecutiveSquares++;
                     winningSquares.add(new int[]{x, y});
@@ -228,7 +227,6 @@ public class GameField implements GameInterface {
             while (y >= dig.y2 && x <= dig.x2) {
 
                 SquareState squareState = field[x][y].getSquareState();
-                System.out.println(squareState.toString());
                 if (!squareState.equals(SquareState.EMPTY) && squareState.equals(latestConsecutiveSquareState)) {
                     numberOfConsecutiveSquares++;
                     winningSquares.add(new int[]{x, y});
