@@ -21,7 +21,7 @@ public class Connect4Gui extends JFrame {
     }
 
     private void init() {
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setSize(500, 300);
         this.setTitle("Connect Four");
         this.setLayout(new BorderLayout());

@@ -3,6 +3,7 @@ package de.dhbw.vs.domain.game.logic;
 import de.dhbw.vs.domain.game.gui.Connect4Gui;
 import de.dhbw.vs.domain.game.network.NetworkInterface;
 
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -151,6 +152,11 @@ public class GameField implements GameInterface {
 
     }
 
+    public void destroy() {
+        gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+
+    }
+
     private static class Diagonal {
         int x1;
         int y1;
@@ -249,8 +255,13 @@ public class GameField implements GameInterface {
 
     private void winnerDetected(List<int[]> winningSquares, SquareState latestConsecutiveSquareState) {
         status = Status.TERMINATED;
+        gui.update(field);
         gui.displayWinner(winningSquares);
+
         System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
+
     }
+
+
 
 }

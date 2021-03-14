@@ -2,6 +2,7 @@ package de.dhbw.vs.domain.player.executers;
 
 import de.dhbw.vs.domain.game.logic.GameField;
 import de.dhbw.vs.domain.game.logic.Move;
+import de.dhbw.vs.domain.game.logic.Status;
 import de.dhbw.vs.domain.game.network.NetworkInterface;
 import de.dhbw.vs.domain.player.StateExecute;
 import org.springframework.http.HttpEntity;
@@ -29,7 +30,8 @@ public class Play implements StateExecute, NetworkInterface {
 
     @Override
     public void interrupt() {
-
+        this.game.destroy();
+        this.game = null;
     }
 
     public void executeMove(Move move){
