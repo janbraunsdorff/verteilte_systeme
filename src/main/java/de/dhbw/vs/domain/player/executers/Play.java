@@ -1,7 +1,5 @@
 package de.dhbw.vs.domain.player.executers;
 
-import de.dhbw.vs.api.model.HelloExchange;
-import de.dhbw.vs.api.model.PeerList;
 import de.dhbw.vs.domain.game.logic.GameField;
 import de.dhbw.vs.domain.game.logic.Move;
 import de.dhbw.vs.domain.game.network.NetworkInterface;

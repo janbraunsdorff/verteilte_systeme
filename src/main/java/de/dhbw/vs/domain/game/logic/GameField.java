@@ -36,7 +36,7 @@ public class GameField implements GameInterface {
 
     @Override
     public void executeExternMove(Move move) {
-        if (status.equals(Status.ACTIVE))
+        if (status.equals(Status.ACTIVE) || status.equals(Status.TERMINATED))
             return;
 
         executeMove(move);
@@ -49,7 +49,7 @@ public class GameField implements GameInterface {
 
     @Override
     public void executeInternMove(Move move) {
-        if (status.equals(Status.WAITING))
+        if (status.equals(Status.WAITING) || status.equals(Status.TERMINATED) )
             return;
 
         executeMove(move);
@@ -248,6 +248,7 @@ public class GameField implements GameInterface {
     }
 
     private void winnerDetected(List<int[]> winningSquares, SquareState latestConsecutiveSquareState) {
+        status = Status.TERMINATED;
         gui.displayWinner(winningSquares);
         System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
     }
