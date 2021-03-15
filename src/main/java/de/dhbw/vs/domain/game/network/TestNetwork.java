@@ -3,12 +3,12 @@ package de.dhbw.vs.domain.game.network;
 import de.dhbw.vs.domain.game.logic.GameField;
 import de.dhbw.vs.domain.game.logic.Move;
 
-public class Network implements NetworkInterface{
-    private GameField game1 = new GameField(this, true);
-    private GameField game2 = new GameField(this, false);
+public class TestNetwork implements NetworkInterface{
+    private final GameField game1 = new GameField(this, true);
+    private final GameField game2 = new GameField(this, false);
     private boolean beginnerplayeronmove = true;
 
-    public Network() {
+    public TestNetwork() {
 
     }
 
@@ -25,10 +25,7 @@ public class Network implements NetworkInterface{
     }
 
     public static void main(String[] args) {
-        Network network = new Network();
-
-
-
+        TestNetwork network = new TestNetwork();
     }
 
 
