@@ -154,6 +154,7 @@ public class GameField implements GameInterface {
 
     public void destroy() {
         gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
+        gui.dispose();
     }
 
     private static class Diagonal {
