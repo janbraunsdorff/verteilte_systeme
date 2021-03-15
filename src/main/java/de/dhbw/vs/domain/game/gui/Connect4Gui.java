@@ -13,7 +13,6 @@ public class Connect4Gui extends JFrame {
     private final GameInterface game;
     private final JLabel stateText = new JLabel();
     private final JPanel[][] gameField = new JPanel[7][6];
-    private final List<JButton> buttons = new ArrayList<>();
 
     public Connect4Gui(GameInterface game) {
         this.game = game;
@@ -40,7 +39,6 @@ public class Connect4Gui extends JFrame {
             JButton columnButton = new JButton("x");
             columnButton.addActionListener(e -> insertDisc(finalI));
             columnPanel.add(columnButton);
-            buttons.add(columnButton);
             JPanel[] column = new JPanel[6];
 
             for (int u = 0; u < 6; u++) {
@@ -82,7 +80,6 @@ public class Connect4Gui extends JFrame {
             gameField[squarePosition[0]][squarePosition[1]].setBorder(BorderFactory.createLineBorder(Color.GREEN, 5));
         }
 
-        this.buttons.forEach(JButton::disable);
         JOptionPane.showMessageDialog(null, "Das Spiel ist zu Ende", "Ergebnis", JOptionPane.INFORMATION_MESSAGE);
     }
 }

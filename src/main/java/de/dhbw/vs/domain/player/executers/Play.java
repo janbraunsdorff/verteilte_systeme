@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 public class Play implements StateExecute, NetworkInterface {
 
-
     private final boolean isFirst;
     private GameField game;
     private Integer portNumber;
@@ -23,7 +22,7 @@ public class Play implements StateExecute, NetworkInterface {
 
     @Override
     public void execute(String... args) throws Exception {
-        System.out.println("I am " + (isFirst? "first": "second") + " and i send to " + args[0]);
+        System.out.println("I am " + (isFirst ? "first" : "second") + " and i send to " + args[0]);
         this.portNumber = Integer.valueOf(args[0]);
         this.game = new GameField(this, isFirst);
     }
@@ -34,7 +33,7 @@ public class Play implements StateExecute, NetworkInterface {
         this.game = null;
     }
 
-    public void executeMove(Move move){
+    public void executeMove(Move move) {
         game.executeExternMove(move);
     }
 

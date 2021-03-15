@@ -17,8 +17,8 @@ public class GameField implements GameInterface {
 
     public GameField(NetworkInterface network, boolean isBeginningPlayer) {
         for (Square[] col : field) {
-            for (int i = 0; i < col.length; i++) {
-                col[i] = new Square();
+            for (int row = 0; row < col.length; row++) {
+                col[row] = new Square();
             }
         }
         this.network = network;
@@ -154,7 +154,6 @@ public class GameField implements GameInterface {
 
     public void destroy() {
         gui.dispatchEvent(new WindowEvent(gui, WindowEvent.WINDOW_CLOSING));
-
     }
 
     private static class Diagonal {
@@ -255,13 +254,7 @@ public class GameField implements GameInterface {
 
     private void winnerDetected(List<int[]> winningSquares, SquareState latestConsecutiveSquareState) {
         status = Status.TERMINATED;
-        gui.update(field);
         gui.displayWinner(winningSquares);
-
         System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
-
     }
-
-
-
 }

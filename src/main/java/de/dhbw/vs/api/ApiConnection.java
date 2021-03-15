@@ -35,7 +35,7 @@ public class ApiConnection {
 
     @PostMapping("/wannaPlay")
     public boolean wannaPlay(@RequestBody WannaPlayExchange exchange) throws Exception {
-        System.out.println("Someone wants to play: ");
+        System.out.println("Do you want to play with someone? [y/N]: ");
         String input = System.console().readLine();
 
         if(input.equals("y")) {
