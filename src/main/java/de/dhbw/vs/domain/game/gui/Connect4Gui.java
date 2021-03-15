@@ -13,7 +13,7 @@ public class Connect4Gui extends JFrame {
     private final GameInterface game;
     private final JLabel stateText = new JLabel();
     private final JPanel[][] gameField = new JPanel[7][6];
-    private final  List<JButton> buttons = new ArrayList<>();
+    private final List<JButton> buttons = new ArrayList<>();
 
     public Connect4Gui(GameInterface game) {
         this.game = game;
@@ -27,40 +27,39 @@ public class Connect4Gui extends JFrame {
         this.setLayout(new BorderLayout());
         JPanel statusPanel = new JPanel();
         statusPanel.add(stateText);
-        this.stateText.setText(game.getPlayer().toString() + ", " + game.getStatus().toString());
-        this.add(stateText, BorderLayout.NORTH);
+        this.add(statusPanel, BorderLayout.NORTH);
+        updateStateText();
 
         JPanel gamePanel = new JPanel();
         gamePanel.setLayout(new GridLayout(1, 7));
 
         for (int i = 0; i < 7; i++) {
-            JPanel p = new JPanel();
-            p.setLayout(new GridLayout(7, 1));
+            JPanel columnPanel = new JPanel();
+            columnPanel.setLayout(new GridLayout(7, 1));
             int finalI = i;
-            JButton j = new JButton("x");
-            p.add(j);
-            buttons.add(j);
-            j.addActionListener(e -> insertDisc(finalI));
+            JButton columnButton = new JButton("x");
+            columnButton.addActionListener(e -> insertDisc(finalI));
+            columnPanel.add(columnButton);
+            buttons.add(columnButton);
             JPanel[] column = new JPanel[6];
 
             for (int u = 0; u < 6; u++) {
                 JPanel pp = new JPanel();
                 pp.setBackground(Color.WHITE);
                 pp.setBorder(BorderFactory.createLineBorder(Color.black));
-                p.add(pp);
-                column[5-u] = pp;
+                columnPanel.add(pp);
+                column[5 - u] = pp;
             }
             gameField[i] = column;
-            gamePanel.add(p);
+            gamePanel.add(columnPanel);
         }
         this.add(gamePanel, BorderLayout.CENTER);
-
         setVisible(true);
     }
 
     private void insertDisc(int column) {
         Move move = new Move(column);
-        if(game.moveIsPossible(move))
+        if (game.moveIsPossible(move))
             this.game.executeInternMove(move);
     }
 
@@ -71,15 +70,19 @@ public class Connect4Gui extends JFrame {
                 panel.setBackground(field[i][j].getSquareState().getColor());
             }
         }
+        updateStateText();
+    }
+
+    private void updateStateText() {
         this.stateText.setText(game.getPlayer().toString() + ", " + game.getStatus().toString());
     }
 
     public void displayWinner(List<int[]> winningSquares) {
-        for(int[] squarePosition : winningSquares) {
+        for (int[] squarePosition : winningSquares) {
             gameField[squarePosition[0]][squarePosition[1]].setBorder(BorderFactory.createLineBorder(Color.GREEN, 5));
         }
 
         this.buttons.forEach(JButton::disable);
-        JOptionPane.showMessageDialog(null, "Das Spiel ist zu Ende", "Ergebnis",  JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Das Spiel ist zu Ende", "Ergebnis", JOptionPane.INFORMATION_MESSAGE);
     }
 }
