@@ -254,7 +254,7 @@ public class GameField implements GameInterface {
 
     private void winnerDetected(List<int[]> winningSquares, SquareState latestConsecutiveSquareState) {
         status = Status.TERMINATED;
-        gui.displayWinner(winningSquares);
+        new Thread(() ->{gui.displayWinner(winningSquares);}).start();
         System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
     }
 }
