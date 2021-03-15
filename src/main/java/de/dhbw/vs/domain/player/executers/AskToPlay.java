@@ -46,15 +46,21 @@ public class AskToPlay implements StateExecute {
         // player
         Future<Integer> resultFuture = completionService.take();
         System.out.println("got from player: " + resultFuture.get());
-        player.interrupt(State.PLAY_FIRST, String.valueOf(resultFuture.get()));
+        if(resultFuture.get() != -1) {
+            player.interrupt(State.PLAY_FIRST, String.valueOf(resultFuture.get()));
+        } else {
+            System.out.println("Player dont want to play!");
+        }
 
 
         // say no
+        /*
         for (int i = 1; i < peersToAsk.size(); i++) {
             Integer decideNo = completionService.take().get();
             // TODO: Say no in background
             deniedToPlay(decideNo);
         }
+         */
     }
 
     private void deniedToPlay(int portNumber){
