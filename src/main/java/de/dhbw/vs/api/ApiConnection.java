@@ -26,6 +26,10 @@ public class ApiConnection {
         this.player = player;
     }
 
+    @GetMapping("/present")
+    public void present(){
+    }
+
     @PostMapping("/online")
     public PeerList isOnline(@RequestBody HelloExchange exchange){
         this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now()));
