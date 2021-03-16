@@ -1,23 +1,21 @@
 package de.dhbw.vs.repo;
 
 import de.dhbw.vs.Config;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class PeerRepository {
     private final Integer myPort;
-    private final HashMap<Integer, Peer> peers;
+    private final SpringPeerRepository repository;
 
 
-    public PeerRepository(Config config) {
+    public PeerRepository(Config config, SpringPeerRepository repository) {
         this.myPort = config.getMyPort();
-        this.peers = new HashMap<>();
+        this.repository = repository;
     }
 
 
@@ -26,33 +24,28 @@ public class PeerRepository {
     }
 
     public void addPeer(Peer peer) {
-        if (peer.getPort() == myPort) {
+        var dbPeer = this.repository.findByPublicKey(peer.getPublicKey());
+        if (dbPeer.isEmpty()){
+            this.repository.save(peer);
             return;
         }
 
-        if (this.peers.containsKey(peer.getPort())) {
-            if (peer.getLastUpdated().isAfter(this.peers.get(peer.getPort()).getLastUpdated())) {
-                if (peer.isDeleted()) {
-                    this.peers.remove(peer.getPort());
-                } else {
-                    this.peers.put(peer.getPort(), peer);
-                }
-            }
-        } else if (!peer.isDeleted()) {
-            this.peers.put(peer.getPort(), peer);
+        dbPeer.get().setPort(peer.getPort());
+        if (dbPeer.get().getLastUpdated().isBefore(peer.getLastUpdated())){
+            dbPeer.get().setDeleted(peer.isDeleted());
+            dbPeer.get().setLastUpdated(peer.getLastUpdated());
         }
 
-        this.peers.values().forEach(a -> System.out.println("[" + myPort + "] -> " + a));
+        this.repository.save(peer);
     }
 
     public List<Peer> getPeerList() {
-        return new ArrayList<>(this.peers.values());
+        return (List<Peer>) this.repository.findAll();
     }
 
     public List<Integer> getNextPeersToPlay(int numberOfPeersToAsk) {
-        return this.peers.values().stream()
-                .sorted(Comparator.comparing(Peer::getLastUpdated))
-                .limit(numberOfPeersToAsk)
+        return this.repository.findAll(PageRequest.of(0, numberOfPeersToAsk))
+                .stream()
                 .map(Peer::getPort)
                 .collect(Collectors.toList());
     }

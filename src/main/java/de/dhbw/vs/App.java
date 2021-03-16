@@ -10,11 +10,8 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class App  {
     public static void main(String[] args) {
-
         SpringApplicationBuilder builder = new SpringApplicationBuilder(App.class);
-
         builder.headless(false);
-
         ConfigurableApplicationContext context = builder.run(args);
     }
 
