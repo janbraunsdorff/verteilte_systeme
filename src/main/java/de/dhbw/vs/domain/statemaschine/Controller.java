@@ -18,6 +18,10 @@ public class Controller {
         return false;
     }
 
+    public void gameDone(){
+        System.out.println("Controller says done");
+    }
+
     public Thread getThread() {
         return thread;
     }
@@ -26,8 +30,19 @@ public class Controller {
         return currentThread;
     }
 
+    public void waitCompletion(){
+        while (this.getThread().isAlive()) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void interrupt() {
         if (this.currentThread != null) this.currentThread.interrupt();
         if (this.thread != null) this.thread.interrupt();
     }
+
 }

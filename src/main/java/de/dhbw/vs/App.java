@@ -11,6 +11,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @SpringBootApplication
 public class App {
     public static void main(String[] args) {
@@ -24,28 +26,21 @@ public class App {
     public CommandLineRunner commandLineRunner(Controller controller, Config config, PeerRepository repo) throws Exception {
         return args -> {
             controller.changeCurrentWork(new FindAnyPeer(config, repo));
-            while (controller.getThread().isAlive()) {
-                Thread.sleep(1000);
-            }
+            controller.waitCompletion();
 
-            // frage:
-            Integer port = repo.getNextPeersToPlay(1).get(0);
-            if (port < config.getMyPort()) {
-                System.out.println("frage");
-                WannaPlay executable = new WannaPlay(port, config.getMyPort());
+            // find player and play
+            List<Integer> nextPeersToPlay = repo.getNextPeersToPlay(1);
+            if (!nextPeersToPlay.isEmpty()) {
+                WannaPlay executable = new WannaPlay(nextPeersToPlay.get(0), config.getMyPort());
                 controller.changeCurrentWork(executable);
+                controller.waitCompletion();
 
-                while (controller.getThread().isAlive()) {
-                    Thread.sleep(1000);
+                if (executable.getResponse()) {
+                    controller.changeCurrentWork(new Play(true, nextPeersToPlay.get(0), controller));
+                    controller.waitCompletion();
                 }
-
-                System.out.println("start game");
-                controller.changeCurrentWork(new Play(true, port));
-            }else {
-                System.out.println("warten");
             }
         };
-
 
     }
 

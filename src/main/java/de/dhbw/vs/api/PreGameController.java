@@ -43,7 +43,7 @@ public class PreGameController {
 
         if(input.equals("y")) {
             this.controller.interrupt();
-            this.controller.changeCurrentWork(new Play(false, exchange.getPort()));
+            this.controller.changeCurrentWork(new Play(false, exchange.getPort(), controller));
             return true;
         }
 

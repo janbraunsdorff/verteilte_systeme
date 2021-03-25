@@ -2,9 +2,9 @@ package de.dhbw.vs.domain.player.executers;
 
 import de.dhbw.vs.domain.game.logic.GameField;
 import de.dhbw.vs.domain.game.logic.Move;
-import de.dhbw.vs.domain.game.logic.Status;
 import de.dhbw.vs.domain.game.network.NetworkInterface;
 import de.dhbw.vs.domain.player.StateExecute;
+import de.dhbw.vs.domain.statemaschine.Controller;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -24,7 +24,7 @@ public class Play implements StateExecute, NetworkInterface {
     public void execute(String... args) throws Exception {
         System.out.println("I am " + (isFirst ? "first" : "second") + " and i send to " + args[0]);
         this.portNumber = Integer.valueOf(args[0]);
-        this.game = new GameField(this, isFirst);
+        this.game = new GameField(this, isFirst, null);
     }
 
     @Override
