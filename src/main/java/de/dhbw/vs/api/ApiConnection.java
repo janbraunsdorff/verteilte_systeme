@@ -33,12 +33,7 @@ public class ApiConnection {
     public void present(){
     }
 
-    @PostMapping("/online")
-    public PeerList isOnline(@RequestBody HelloExchange exchange){
-        this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now(), exchange.getPublicKey()));
-        this.repo.addPeer(exchange.getPeers());
-        return new PeerList(this.repo.getPeerList(), config.getKeyPair().getPublic().getEncoded());
-    }
+
 
     @PostMapping("/wannaPlay")
     public boolean wannaPlay(@RequestBody WannaPlayExchange exchange) throws Exception {

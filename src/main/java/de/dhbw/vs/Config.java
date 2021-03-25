@@ -63,7 +63,6 @@ public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerF
     @Override
     public void customize(ConfigurableWebServerFactory factory) {
         byte encoded = sum(this.getKeyPair().getPublic().getEncoded());
-        System.out.println(encoded);
         int keyPort =  encoded % 255;
         this.myPort = keyPort + fromPort;
 

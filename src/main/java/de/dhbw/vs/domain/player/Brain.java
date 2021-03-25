@@ -24,12 +24,15 @@ public class Brain {
     }
 
     public void changeState(State state, String ...args) throws Exception {
+        System.out.println(state);
         if (currentExecution !=null) {
             currentExecution.interrupt();
         }
         this.currentExecution = this.executions.get(state);
 
         this.executions.get(state).execute(args);
+
+        System.out.println("end");
     }
 
     public void executeMove(Move move){

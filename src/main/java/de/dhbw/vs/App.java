@@ -1,6 +1,9 @@
 package de.dhbw.vs;
 
 import de.dhbw.vs.api.Player;
+import de.dhbw.vs.domain.statemaschine.Controller;
+import de.dhbw.vs.domain.statemaschine.work.FindAnyPeer;
+import de.dhbw.vs.repo.PeerRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -17,9 +20,14 @@ public class App  {
 
 
     @Bean
-    public CommandLineRunner commandLineRunner(Player player) throws Exception {
+    public CommandLineRunner commandLineRunner(Controller controller, Config config, PeerRepository repo) throws Exception {
        return args -> {
-           player.start();
+           controller.changeCurrentWork(new FindAnyPeer(config, repo));
+           while(controller.getThread().isAlive()){
+               Thread.sleep(1000);
+           }
+
+           System.out.println("found :)");
        };
     }
 
