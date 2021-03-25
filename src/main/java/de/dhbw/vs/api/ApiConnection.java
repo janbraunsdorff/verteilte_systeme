@@ -1,5 +1,6 @@
 package de.dhbw.vs.api;
 
+import de.dhbw.vs.Config;
 import de.dhbw.vs.api.model.HelloExchange;
 import de.dhbw.vs.api.model.PeerList;
 import de.dhbw.vs.api.model.WannaPlayExchange;
@@ -19,18 +20,24 @@ public class ApiConnection {
 
     private final PeerRepository repo;
     private final Player player;
+    private final Config config;
 
 
-    public ApiConnection(PeerRepository repo, Player player){
+    public ApiConnection(PeerRepository repo, Player player, Config config){
         this.repo = repo;
         this.player = player;
+        this.config = config;
+    }
+
+    @GetMapping("/present")
+    public void present(){
     }
 
     @PostMapping("/online")
     public PeerList isOnline(@RequestBody HelloExchange exchange){
-        this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now()));
+        this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now(), exchange.getPublicKey()));
         this.repo.addPeer(exchange.getPeers());
-        return new PeerList(this.repo.getPeerList());
+        return new PeerList(this.repo.getPeerList(), config.getKeyPair().getPublic().getEncoded());
     }
 
     @PostMapping("/wannaPlay")

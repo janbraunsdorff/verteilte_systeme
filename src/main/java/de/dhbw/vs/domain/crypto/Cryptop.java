@@ -1,5 +1,7 @@
 package de.dhbw.vs.domain.crypto;
 
+import org.springframework.stereotype.Service;
+
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -9,6 +11,10 @@ import java.security.*;
 public class Cryptop {
 
     private final KeyPair keys;
+
+    public Cryptop(KeyPair keys) {
+        this.keys = keys;
+    }
 
     public Cryptop() throws NoSuchAlgorithmException {
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -31,5 +37,7 @@ public class Cryptop {
         return sig.verify(signature);
     }
 
-
+    public KeyPair getKeys() {
+        return keys;
+    }
 }

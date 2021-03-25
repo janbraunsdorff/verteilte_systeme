@@ -37,11 +37,11 @@ public class FindFirstPeer implements StateExecute {
             System.out.print("Try: " + url + " -> ");
 
             try {
-                HttpEntity<HelloExchange> request = new HttpEntity<HelloExchange>(new HelloExchange(config.getMyPort(), this.repo.getPeerList()));
+                HttpEntity<HelloExchange> request = new HttpEntity<HelloExchange>(new HelloExchange(config.getMyPort(), config.getKeyPair().getPublic().getEncoded(), this.repo.getPeerList()));
                 ResponseEntity<PeerList> response = restTemplate.postForEntity(url, request, PeerList.class);
                 System.out.println(response.getStatusCode() + "   " + response.getBody());
                 this.repo.addPeer(Objects.requireNonNull(response.getBody()).getPeerList());
-                this.repo.addPeer(new Peer(portNumber, LocalDateTime.now()));
+                this.repo.addPeer(new Peer(portNumber, LocalDateTime.now(), response.getBody().getPublicKey()));
                 return;
             } catch (RestClientException ex) {
                 System.out.println("---");
