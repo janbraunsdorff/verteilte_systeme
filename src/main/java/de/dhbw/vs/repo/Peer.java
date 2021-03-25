@@ -83,7 +83,6 @@ public class Peer {
                 "port=" + port +
                 ", lastUpdated=" + lastUpdated +
                 ", isDeleted=" + isDeleted +
-                ", publicKey=" + Arrays.toString(publicKey) +
                 '}';
     }
 }

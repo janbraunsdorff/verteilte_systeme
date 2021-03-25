@@ -39,6 +39,10 @@ public class FindAnyPeer implements Executable {
 
     @Override
     public void run() {
+        if (!repo.getPeerList().isEmpty() || hasToInterrupt){
+            this.repo.getPeerList().forEach(System.out::println);
+            return;
+        }
         System.out.println("Find Any partner");
         for (int portNumber = config.getFromPort(); portNumber <= config.getToPort(); portNumber++) {
             if (portNumber == config.getMyPort()) continue;

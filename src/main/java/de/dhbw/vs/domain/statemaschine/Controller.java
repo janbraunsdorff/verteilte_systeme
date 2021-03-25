@@ -8,12 +8,8 @@ public class Controller {
     private Thread thread;
 
     public boolean changeCurrentWork(Executable executable) {
-        System.out.println(Executable.class);
         if (currentThread == null || currentThread.interruptable()) {
-
-            if (this.currentThread != null) this.currentThread.interrupt();
-            if (this.thread != null) this.thread.interrupt();
-
+            interrupt();
             this.currentThread = executable;
             this.thread = new Thread(this.currentThread);
             this.thread.start();
@@ -24,5 +20,14 @@ public class Controller {
 
     public Thread getThread() {
         return thread;
+    }
+
+    public Executable getCurrentThread() {
+        return currentThread;
+    }
+
+    public void interrupt() {
+        if (this.currentThread != null) this.currentThread.interrupt();
+        if (this.thread != null) this.thread.interrupt();
     }
 }
