@@ -6,7 +6,6 @@ import de.dhbw.vs.domain.game.logic.Square;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Connect4Gui extends JFrame {

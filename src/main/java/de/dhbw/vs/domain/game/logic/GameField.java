@@ -260,6 +260,6 @@ public class GameField implements GameInterface {
         status = Status.TERMINATED;
         new Thread(() ->{gui.displayWinner(winningSquares);}).start();
         System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
-        controller.gameDone();
+        controller.gameDone(this.player.toString().equals(latestConsecutiveSquareState.toString()));
     }
 }

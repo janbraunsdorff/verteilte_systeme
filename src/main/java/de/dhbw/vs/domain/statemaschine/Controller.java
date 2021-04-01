@@ -18,8 +18,9 @@ public class Controller {
         return false;
     }
 
-    public void gameDone(){
+    public void gameDone(boolean haveIWon){
         System.out.println("Controller says done");
+        System.out.println("Controller says i have" + (haveIWon? " " : " not ") + "won.");
     }
 
     public Thread getThread() {
