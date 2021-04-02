@@ -32,6 +32,7 @@ public class PreGameController {
     public PeerList isOnline(@RequestBody HelloExchange exchange){
         this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now(), exchange.getPublicKey()));
         this.repo.addPeer(exchange.getPeers());
+        System.out.println("Got online request from: " + exchange.getPort());
         return new PeerList(this.repo.getPeerList(), config.getKeyPair().getPublic().getEncoded());
     }
 

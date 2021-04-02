@@ -36,7 +36,7 @@ public class Play implements Executable, NetworkInterface {
     @Override
     public void run() {
         System.out.println("I am " + (isFirst ? "first" : "second") + " and i send to " + portNumber);
-        this.game = new GameField(this, isFirst, controller);
+        this.game = new GameField(this, isFirst, controller, portNumber);
     }
 
     public void executeMove(Move move) {

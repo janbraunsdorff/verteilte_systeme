@@ -21,6 +21,13 @@ public class PeerRepository {
         this.repository = repository;
     }
 
+    public void increasePeerRanking(int port) {
+        var dbPeer = this.repository.findByPort(port);
+        if (dbPeer.isPresent()){
+            dbPeer.get().increaseRanking();
+            this.repository.save(dbPeer.get());
+        }
+    }
 
     public void addPeer(List<Peer> peers) {
         peers.forEach(this::addPeer);
@@ -42,7 +49,7 @@ public class PeerRepository {
             dbPeer.get().setDeleted(peer.isDeleted());
             dbPeer.get().setLastUpdated(peer.getLastUpdated());
         }
-        if(dbPeer.get().getRanking() > peer.getRanking()) {
+        if(dbPeer.get().getRanking() < peer.getRanking()) {
             dbPeer.get().setRanking(peer.getRanking());
         }
 

@@ -24,7 +24,7 @@ public class Play implements StateExecute, NetworkInterface {
     public void execute(String... args) throws Exception {
         System.out.println("I am " + (isFirst ? "first" : "second") + " and i send to " + args[0]);
         this.portNumber = Integer.valueOf(args[0]);
-        this.game = new GameField(this, isFirst, null);
+        this.game = new GameField(this, isFirst, null, portNumber);
     }
 
     @Override

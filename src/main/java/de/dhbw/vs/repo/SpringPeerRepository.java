@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface SpringPeerRepository extends CrudRepository<Peer, byte[]> {
     Page<Peer> findAll(Pageable pageable);
     Optional<Peer> findByPublicKey(byte[] publicKey);
+    Optional<Peer> findByPort(int port);
 
 }
