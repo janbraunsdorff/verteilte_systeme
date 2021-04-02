@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Brain {
-    private  Map<State, StateExecute> executions;
+    private Map<State, StateExecute> executions;
     private StateExecute currentExecution;
 
     public Brain(Config config, PeerRepository repository, Player player) {

@@ -9,7 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-public class Play  implements Executable, NetworkInterface {
+public class Play implements Executable, NetworkInterface {
 
     private final boolean isFirst;
     private GameField game;

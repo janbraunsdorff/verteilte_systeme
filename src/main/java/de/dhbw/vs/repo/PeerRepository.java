@@ -42,6 +42,9 @@ public class PeerRepository {
             dbPeer.get().setDeleted(peer.isDeleted());
             dbPeer.get().setLastUpdated(peer.getLastUpdated());
         }
+        if(dbPeer.get().getRanking() > peer.getRanking()) {
+            dbPeer.get().setRanking(peer.getRanking());
+        }
 
         this.repository.save(peer);
     }

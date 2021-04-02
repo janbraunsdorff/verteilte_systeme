@@ -21,6 +21,10 @@ public class Controller {
     public void gameDone(boolean haveIWon){
         System.out.println("Controller says done");
         System.out.println("Controller says i have" + (haveIWon? " " : " not ") + "won.");
+        System.out.println("Exchanging Ranking Information...");
+        if(!haveIWon) {
+            rankingService.addWonGame(Player);
+        }
     }
 
     public Thread getThread() {
