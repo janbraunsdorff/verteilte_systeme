@@ -45,7 +45,6 @@ public class Controller {
             // increase ranking for contestant
             repo.increasePeerRanking(port);
             // send result to all known peers in list
-            int portNumber = config.getMyPort();
 
             RestTemplate restTemplate = new RestTemplate();
 
@@ -55,7 +54,6 @@ public class Controller {
                 try {
                     HttpEntity<HelloExchange> request = new HttpEntity<HelloExchange>(new HelloExchange(config.getMyPort(), config.getKeyPair().getPublic().getEncoded(), this.repo.getPeerList()));
                     ResponseEntity<PeerList> response = restTemplate.postForEntity(url, request, PeerList.class);
-                    return;
                 } catch (RestClientException ex) {
                 }
             }
