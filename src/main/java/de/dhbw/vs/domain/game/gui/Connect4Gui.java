@@ -79,6 +79,6 @@ public class Connect4Gui extends JFrame {
             gameField[squarePosition[0]][squarePosition[1]].setBorder(BorderFactory.createLineBorder(Color.GREEN, 5));
         }
 
-        JOptionPane.showMessageDialog(null, "Das Spiel ist zu Ende", "Ergebnis", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Das Spiel ist zu Ende", "Ergebnis", JOptionPane.INFORMATION_MESSAGE);
     }
 }

@@ -40,7 +40,6 @@ public class Controller {
 
     public void gameDone(boolean haveIWon, int port){
         this.alreadyPlaying = false;
-        System.out.println("Controller says done");
         System.out.println("Controller says i have" + (haveIWon? " " : " not ") + "won.");
         System.out.println("Exchanging Ranking Information...");
         if(!haveIWon) {

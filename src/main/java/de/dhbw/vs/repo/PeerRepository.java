@@ -63,7 +63,6 @@ public class PeerRepository {
     public List<Integer> getNextPeersToPlay(int numberOfPeersToAsk) {
         return ((List<Peer>) this.repository.findAll())
                 .stream()
-                .filter(a -> a.getPort() < myPort)
                 .limit(numberOfPeersToAsk)
                 .map(Peer::getPort)
                 .collect(Collectors.toList());
