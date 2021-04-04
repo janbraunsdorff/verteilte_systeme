@@ -111,6 +111,13 @@ public class Peer {
                 ", ranking=" + ranking +
                 '}';
     }
+
+    public String rankingInfo() {
+        return "Peer{" +
+                "port=" + port +
+                ", ranking=" + ranking +
+                '}';
+    }
 }
 
 

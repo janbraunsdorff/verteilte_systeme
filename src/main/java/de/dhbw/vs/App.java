@@ -31,7 +31,7 @@ public class App {
             // find player and play
             List<Integer> nextPeersToPlay = repo.getNextPeersToPlay(1);
             if (!nextPeersToPlay.isEmpty()) {
-                WannaPlay executable = new WannaPlay(nextPeersToPlay.get(0), config.getMyPort());
+                WannaPlay executable = new WannaPlay(nextPeersToPlay.get(0), config.getMyPort(), repo);
                 controller.changeCurrentWork(executable);
                 controller.waitCompletion();
 

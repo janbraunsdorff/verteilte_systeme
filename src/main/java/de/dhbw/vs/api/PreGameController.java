@@ -39,6 +39,10 @@ public class PreGameController {
 
     @PostMapping("/wannaPlay")
     public boolean wannaPlay(@RequestBody WannaPlayExchange exchange) throws Exception {
+        if(controller.isAlreadyPlaying()) {
+            return false;
+        }
+
         System.out.println("Got ask from "+ exchange.getPort()+ " [y/n]: ");
         String input = System.console().readLine();
 

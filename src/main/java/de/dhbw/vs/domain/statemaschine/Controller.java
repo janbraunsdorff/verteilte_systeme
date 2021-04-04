@@ -3,6 +3,7 @@ package de.dhbw.vs.domain.statemaschine;
 import de.dhbw.vs.Config;
 import de.dhbw.vs.api.model.HelloExchange;
 import de.dhbw.vs.api.model.PeerList;
+import de.dhbw.vs.domain.statemaschine.work.Play;
 import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-
 @Service
 public class Controller {
     private Executable currentThread;
     private Thread thread;
+    private boolean alreadyPlaying = false;
 
     @Autowired
     private PeerRepository repo;
@@ -32,12 +31,15 @@ public class Controller {
             this.currentThread = executable;
             this.thread = new Thread(this.currentThread);
             this.thread.start();
+            this.alreadyPlaying = this.currentThread instanceof Play;
+
             return true;
         }
         return false;
     }
 
     public void gameDone(boolean haveIWon, int port){
+        this.alreadyPlaying = false;
         System.out.println("Controller says done");
         System.out.println("Controller says i have" + (haveIWon? " " : " not ") + "won.");
         System.out.println("Exchanging Ranking Information...");
@@ -57,6 +59,7 @@ public class Controller {
                 } catch (RestClientException ex) {
                 }
             }
+
 
             this.repo.getPeerList().forEach(System.out::println);
         }
@@ -83,6 +86,10 @@ public class Controller {
     public void interrupt() {
         if (this.currentThread != null) this.currentThread.interrupt();
         if (this.thread != null) this.thread.interrupt();
+    }
+
+    public boolean isAlreadyPlaying() {
+        return this.alreadyPlaying;
     }
 
 }
