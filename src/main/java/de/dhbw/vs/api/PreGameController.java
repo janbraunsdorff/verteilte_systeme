@@ -4,11 +4,10 @@ import de.dhbw.vs.Config;
 import de.dhbw.vs.api.model.HelloExchange;
 import de.dhbw.vs.api.model.PeerList;
 import de.dhbw.vs.api.model.WannaPlayExchange;
-import de.dhbw.vs.domain.game.logic.Move;
-import de.dhbw.vs.domain.player.State;
+import de.dhbw.vs.domain.statemaschine.Controller;
+import de.dhbw.vs.domain.statemaschine.work.Play;
 import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,51 +15,42 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 
 @RestController
-public class ApiConnection {
+public class PreGameController {
 
     private final PeerRepository repo;
-    private final Player player;
     private final Config config;
+    private final Controller controller;
 
 
-    public ApiConnection(PeerRepository repo, Player player, Config config){
+    public PreGameController(PeerRepository repo, Config config, Controller controller){
         this.repo = repo;
-        this.player = player;
         this.config = config;
-    }
-
-    @GetMapping("/present")
-    public void present(){
+        this.controller = controller;
     }
 
     @PostMapping("/online")
     public PeerList isOnline(@RequestBody HelloExchange exchange){
         this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now(), exchange.getPublicKey()));
         this.repo.addPeer(exchange.getPeers());
+        System.out.println("Got online request from: " + exchange.getPort());
         return new PeerList(this.repo.getPeerList(), config.getKeyPair().getPublic().getEncoded());
     }
 
+
     @PostMapping("/wannaPlay")
     public boolean wannaPlay(@RequestBody WannaPlayExchange exchange) throws Exception {
-        System.out.println("Do you want to play with someone? [y/N]: ");
+        if(controller.isAlreadyPlaying()) {
+            return false;
+        }
+
+        System.out.println("Got ask from "+ exchange.getPort()+ " [y/n]: ");
         String input = System.console().readLine();
 
         if(input.equals("y")) {
-            player.interrupt(State.PLAY_SECOND, String.valueOf(exchange.getPort()));
+            this.controller.startGame(false, exchange.getPort());
             return true;
         }
 
         return false;
-    }
-
-    @GetMapping("/deniedToPlay")
-    public void deniedToPlay(){
-        System.out.println("Hello Darkness my old friend");
-    }
-
-
-    @PostMapping("/receiveMove")
-    public void receiveMove(@RequestBody Move move){
-        this.player.getBrain().executeMove(move);
     }
 }

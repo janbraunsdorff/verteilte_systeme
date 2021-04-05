@@ -4,8 +4,8 @@ import de.dhbw.vs.domain.game.logic.GameField;
 import de.dhbw.vs.domain.game.logic.Move;
 
 public class TestNetwork implements NetworkInterface{
-    private final GameField game1 = new GameField(this, true);
-    private final GameField game2 = new GameField(this, false);
+    private final GameField game1 = new GameField(this, true, null, 0);
+    private final GameField game2 = new GameField(this, false, null, 0);
     private boolean beginnerplayeronmove = true;
 
     public TestNetwork() {

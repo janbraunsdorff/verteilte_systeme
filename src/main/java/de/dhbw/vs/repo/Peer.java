@@ -4,16 +4,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.UUID;
 
 
 @Entity
 public class Peer {
-
-    @Id
-    @Column(name = "id")
-    private String id;
-
     @Column(name = "last_port_seen")
     private int port;
 
@@ -23,6 +19,10 @@ public class Peer {
     @Column(name = "id_deleted")
     private boolean isDeleted;
 
+    @Column(name = "ranking")
+    private int ranking;
+
+    @Id
     @Column(name = "public_key", unique = true)
     private byte[] publicKey;
 
@@ -30,19 +30,27 @@ public class Peer {
     }
 
     public Peer(int port, LocalDateTime lastUpdated, byte[] publicKey) {
-        this.id = UUID.randomUUID().toString();
         this.port = port;
         this.lastUpdated = lastUpdated;
         this.isDeleted = false;
         this.publicKey = publicKey;
+        this.ranking = 0;
+    }
+
+    public Peer(int port, LocalDateTime lastUpdated, byte[] publicKey, int ranking) {
+        this.port = port;
+        this.lastUpdated = lastUpdated;
+        this.isDeleted = false;
+        this.publicKey = publicKey;
+        this.ranking = ranking;
     }
 
     private Peer(int port, LocalDateTime lastUpdated, boolean isDeleted, byte[] publicKey) {
-        this.id = UUID.randomUUID().toString();
         this.port = port;
         this.lastUpdated = lastUpdated;
         this.isDeleted = isDeleted;
         this.publicKey = publicKey;
+        this.ranking = 0;
     }
 
     public int getPort() {
@@ -57,16 +65,8 @@ public class Peer {
         return isDeleted;
     }
 
-    public String getId() {
-        return id;
-    }
-
     public byte[] getPublicKey() {
         return publicKey;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public void setPort(int port) {
@@ -89,12 +89,33 @@ public class Peer {
         return new Peer(port, LocalDateTime.now(), true, publicKey);
     }
 
+    public int getRanking() {
+        return ranking;
+    }
+
+    public void setRanking(int ranking) {
+        this.ranking = ranking;
+    }
+
+    public int increaseRanking() {
+        this.ranking++;
+        return this.ranking;
+    }
+
     @Override
     public String toString() {
         return "Peer{" +
                 "port=" + port +
                 ", lastUpdated=" + lastUpdated +
                 ", isDeleted=" + isDeleted +
+                ", ranking=" + ranking +
+                '}';
+    }
+
+    public String rankingInfo() {
+        return "Peer{" +
+                "port=" + port +
+                ", ranking=" + ranking +
                 '}';
     }
 }

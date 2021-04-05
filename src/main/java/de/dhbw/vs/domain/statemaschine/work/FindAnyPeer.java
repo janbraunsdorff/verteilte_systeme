@@ -1,9 +1,10 @@
-package de.dhbw.vs.domain.player.executers;
+package de.dhbw.vs.domain.statemaschine.work;
 
 import de.dhbw.vs.Config;
 import de.dhbw.vs.api.model.HelloExchange;
 import de.dhbw.vs.api.model.PeerList;
-import de.dhbw.vs.domain.player.StateExecute;
+import de.dhbw.vs.domain.statemaschine.Controller;
+import de.dhbw.vs.domain.statemaschine.Executable;
 import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
 import org.springframework.http.HttpEntity;
@@ -14,21 +15,39 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class FindFirstPeer implements StateExecute {
+public class FindAnyPeer implements Executable {
 
     private final Config config;
     private final PeerRepository repo;
+    private final Controller controller;
     private boolean hasToInterrupt;
 
 
-    public FindFirstPeer(Config config, PeerRepository repository) {
+    public FindAnyPeer(Config config, PeerRepository repository, Controller controller) {
         this.config = config;
         this.repo = repository;
         this.hasToInterrupt = false;
+        this.controller = controller;
     }
 
     @Override
-    public void execute(String... args) {
+    public boolean interruptable() {
+        return true;
+    }
+
+    @Override
+    public void interrupt() {
+        this.hasToInterrupt = true;
+    }
+
+    @Override
+    public void run() {
+        if (!repo.getPeerList().isEmpty() || hasToInterrupt){
+            this.repo.getPeerList().forEach(System.out::println);
+            this.controller.changeState();
+            return;
+        }
+        System.out.println("Find Any partner");
         for (int portNumber = config.getFromPort(); portNumber <= config.getToPort(); portNumber++) {
             if (portNumber == config.getMyPort()) continue;
 
@@ -39,21 +58,21 @@ public class FindFirstPeer implements StateExecute {
             try {
                 HttpEntity<HelloExchange> request = new HttpEntity<HelloExchange>(new HelloExchange(config.getMyPort(), config.getKeyPair().getPublic().getEncoded(), this.repo.getPeerList()));
                 ResponseEntity<PeerList> response = restTemplate.postForEntity(url, request, PeerList.class);
-                System.out.println(response.getStatusCode() + "   " + response.getBody());
                 this.repo.addPeer(Objects.requireNonNull(response.getBody()).getPeerList());
                 this.repo.addPeer(new Peer(portNumber, LocalDateTime.now(), response.getBody().getPublicKey()));
+                System.out.println(response.getStatusCode() + "   " + response.getBody());
+                this.repo.getPeerList().forEach(System.out::println);
                 return;
             } catch (RestClientException ex) {
                 System.out.println("---");
             }
 
-            if (!repo.getPeerList().isEmpty() || hasToInterrupt) return;
+            if (!repo.getPeerList().isEmpty() || hasToInterrupt){
+                this.repo.getPeerList().forEach(System.out::println);
+                return;
+            }
 
         }
-    }
-
-    @Override
-    public void interrupt() {
-        this.hasToInterrupt = true;
+        this.controller.changeState();
     }
 }

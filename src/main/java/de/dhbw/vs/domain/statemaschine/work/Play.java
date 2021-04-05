@@ -1,43 +1,47 @@
-package de.dhbw.vs.domain.player.executers;
+package de.dhbw.vs.domain.statemaschine.work;
 
 import de.dhbw.vs.domain.game.logic.GameField;
 import de.dhbw.vs.domain.game.logic.Move;
-import de.dhbw.vs.domain.game.logic.Status;
 import de.dhbw.vs.domain.game.network.NetworkInterface;
-import de.dhbw.vs.domain.player.StateExecute;
+import de.dhbw.vs.domain.statemaschine.Controller;
+import de.dhbw.vs.domain.statemaschine.Executable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-
-public class Play implements StateExecute, NetworkInterface {
+public class Play implements Executable, NetworkInterface {
 
     private final boolean isFirst;
     private GameField game;
-    private Integer portNumber;
+    private int portNumber;
+    private final Controller controller;
 
-    public Play(boolean isFirst) {
+    public Play(boolean isFirst, int port, Controller controller) {
         this.isFirst = isFirst;
+        this.portNumber = port;
+        this.controller = controller;
     }
 
     @Override
-    public void execute(String... args) throws Exception {
-        System.out.println("I am " + (isFirst ? "first" : "second") + " and i send to " + args[0]);
-        this.portNumber = Integer.valueOf(args[0]);
-        this.game = new GameField(this, isFirst);
+    public boolean interruptable() {
+        return false;
     }
 
     @Override
     public void interrupt() {
-        this.game.destroy();
         this.game = null;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("I am " + (isFirst ? "first" : "second") + " and i send to " + portNumber);
+        this.game = new GameField(this, isFirst, controller, portNumber);
     }
 
     public void executeMove(Move move) {
         game.executeExternMove(move);
     }
 
-    // NetworkInterface
     @Override
     public void sendMove(Move move) {
         RestTemplate restTemplate = new RestTemplate();

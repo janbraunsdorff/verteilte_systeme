@@ -2,6 +2,7 @@ package de.dhbw.vs.domain.game.logic;
 
 import de.dhbw.vs.domain.game.gui.Connect4Gui;
 import de.dhbw.vs.domain.game.network.NetworkInterface;
+import de.dhbw.vs.domain.statemaschine.Controller;
 
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -14,8 +15,11 @@ public class GameField implements GameInterface {
     private final Player player;
     private final Connect4Gui gui;
     private Status status;
+    private final Controller controller;
+    private int port;
 
-    public GameField(NetworkInterface network, boolean isBeginningPlayer) {
+    public GameField(NetworkInterface network, boolean isBeginningPlayer, Controller controller, int port) {
+        this.controller = controller;
         for (Square[] col : field) {
             for (int row = 0; row < col.length; row++) {
                 col[row] = new Square();
@@ -25,6 +29,7 @@ public class GameField implements GameInterface {
         this.player = isBeginningPlayer ? Player.YELLOW : Player.RED;
         this.status = isBeginningPlayer ? Status.ACTIVE : Status.WAITING;
         this.gui = new Connect4Gui(this);
+        this.port = port;
     }
 
     @Override
@@ -257,5 +262,10 @@ public class GameField implements GameInterface {
         status = Status.TERMINATED;
         new Thread(() ->{gui.displayWinner(winningSquares);}).start();
         System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
+        controller.gameDone(this.player.toString().equals(latestConsecutiveSquareState.toString()), this.port);
+    }
+
+    public void end() {
+        this.controller.endGameAndWaitForNew();
     }
 }

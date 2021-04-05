@@ -6,7 +6,6 @@ import de.dhbw.vs.domain.game.logic.Square;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Connect4Gui extends JFrame {
@@ -80,6 +79,13 @@ public class Connect4Gui extends JFrame {
             gameField[squarePosition[0]][squarePosition[1]].setBorder(BorderFactory.createLineBorder(Color.GREEN, 5));
         }
 
-        JOptionPane.showMessageDialog(null, "Das Spiel ist zu Ende", "Ergebnis", JOptionPane.INFORMATION_MESSAGE);
+        int a = JOptionPane.showConfirmDialog(this, "Das Spiel ist zu Ende. \nKlicken sie auf ok um das Fenster zu schliessen.",
+                "Ergebnis", JOptionPane.DEFAULT_OPTION);
+
+        if(a == a) {
+            this.dispose();
+            this.game.end();
+        }
+
     }
 }
