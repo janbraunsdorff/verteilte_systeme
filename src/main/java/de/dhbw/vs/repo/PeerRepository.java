@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +39,7 @@ public class PeerRepository {
             return;
         }
 
-        var dbPeer = this.repository.findByPublicKey(peer.getPublicKey());
+        Optional<Peer> dbPeer = this.repository.findByPublicKey(peer.getPublicKey());
         if (dbPeer.isEmpty()){
             this.repository.save(peer);
             return;
@@ -53,7 +54,7 @@ public class PeerRepository {
             dbPeer.get().setRanking(peer.getRanking());
         }
 
-        this.repository.save(peer);
+        this.repository.save(dbPeer.get());
     }
 
     public List<Peer> getPeerList() {
