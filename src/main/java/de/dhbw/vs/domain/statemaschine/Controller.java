@@ -40,7 +40,7 @@ public class Controller {
 
     public void gameDone(boolean haveIWon, int port){
         this.alreadyPlaying = false;
-        System.out.println("Controller says i have" + (haveIWon? " " : " not ") + "won.");
+        System.out.println("You have" + (haveIWon? " " : " not ") + "won.");
         System.out.println("Exchanging Ranking Information...");
         if(!haveIWon) {
             // increase ranking for contestant
@@ -62,6 +62,16 @@ public class Controller {
 
             this.repo.getPeerList().forEach(System.out::println);
         }
+
+        //this.interrupt();
+/*
+        List<Integer> nextPeersToPlay = repo.getNextPeersToPlay(1);
+        if (!nextPeersToPlay.isEmpty()) {
+            WannaPlay executable = new WannaPlay(nextPeersToPlay.get(0), config.getMyPort(), repo);
+            this.changeCurrentWork(executable);
+            System.out.println("before wait completion");
+            this.waitCompletion();
+        }*/
     }
 
     public Thread getThread() {
