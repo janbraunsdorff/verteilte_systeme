@@ -266,7 +266,6 @@ public class GameField implements GameInterface {
     }
 
     public void end() {
-        System.out.println("end game weit for new...");
-        this.controller.waitForGame();
+        this.controller.endGameAndWaitForNew();
     }
 }

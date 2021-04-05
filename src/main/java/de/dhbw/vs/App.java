@@ -23,7 +23,7 @@ public class App {
 
 
     @Bean
-    public CommandLineRunner commandLineRunner(Controller controller) throws Exception {
+    public CommandLineRunner commandLineRunner(Controller controller) {
         return args -> {
             controller.start();
         };

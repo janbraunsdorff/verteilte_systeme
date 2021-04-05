@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-
 @Service
 public class Controller {
     private Executable currentThread;
@@ -45,25 +43,21 @@ public class Controller {
         changeCurrentWork(new Play(first, port, this));
     }
 
-    public void waitForGame() {
+    public void endGameAndWaitForNew() {
         this.interrupt();
         currentThread = null;
-        System.out.println("in wait for game");
         WannaPlay executable = new WannaPlay(config.getMyPort(), repo, this);
-        System.out.println("wanna play created");
         changeCurrentWork(executable);
     }
 
-    public boolean changeCurrentWork(Executable executable) {
+    public void changeCurrentWork(Executable executable) {
         if (currentThread == null || currentThread.interruptable()) {
             interrupt();
             this.currentThread = executable;
             this.thread = new Thread(this.currentThread);
             this.thread.start();
 
-            return true;
         }
-        return false;
     }
 
     public void gameDone(boolean haveIWon, int port){
@@ -91,22 +85,8 @@ public class Controller {
         }
     }
 
-    public Thread getThread() {
-        return thread;
-    }
-
     public Executable getCurrentThread() {
         return currentThread;
-    }
-
-    public void waitCompletion(){
-        while (this.getThread() != null && this.getThread().isAlive()) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public void interrupt() {
