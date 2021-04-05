@@ -1,11 +1,8 @@
 package de.dhbw.vs.domain.statemaschine.work;
 
-import de.dhbw.vs.api.model.HelloExchange;
-import de.dhbw.vs.api.model.PeerList;
 import de.dhbw.vs.api.model.WannaPlayExchange;
 import de.dhbw.vs.domain.statemaschine.Controller;
 import de.dhbw.vs.domain.statemaschine.Executable;
-import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +16,6 @@ public class WannaPlay implements Executable {
     private final int myPort;
     private final PeerRepository repo;
     private final Controller controller;
-    private boolean ready;
 
     public WannaPlay(int myPort, PeerRepository repo, Controller controller) {
         this.myPort = myPort;
@@ -56,8 +52,7 @@ public class WannaPlay implements Executable {
                     ResponseEntity<Boolean> response = restTemplate.postForEntity(url, request, Boolean.class);
                     System.out.println(response.getStatusCode() + "   " + response.getBody());
                     if (response.getBody()) {
-                        this.ready = response.getBody();
-                        if(this.ready) {
+                        if(response.getBody()) {
                             controller.startGame(true, port);
                         }
                         return;
@@ -66,15 +61,9 @@ public class WannaPlay implements Executable {
                     System.out.println("no reachable");
                 }
 
-                this.ready = false;
-
             } else if (input.equals("r")) {
                 this.repo.getPeerList().forEach(p -> System.out.println(p.rankingInfo()));
             }
         }
-    }
-
-    public Boolean getResponse() {
-        return ready;
     }
 }
