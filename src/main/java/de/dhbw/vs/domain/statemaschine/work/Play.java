@@ -28,7 +28,9 @@ public class Play implements Executable, NetworkInterface {
     }
 
     @Override
-    public void interrupt() {}
+    public void interrupt() {
+        this.game = null;
+    }
 
     @Override
     public void run() {

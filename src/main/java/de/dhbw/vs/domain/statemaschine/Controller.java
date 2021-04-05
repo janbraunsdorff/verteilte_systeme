@@ -3,7 +3,9 @@ package de.dhbw.vs.domain.statemaschine;
 import de.dhbw.vs.Config;
 import de.dhbw.vs.api.model.HelloExchange;
 import de.dhbw.vs.api.model.PeerList;
+import de.dhbw.vs.domain.statemaschine.work.FindAnyPeer;
 import de.dhbw.vs.domain.statemaschine.work.Play;
+import de.dhbw.vs.domain.statemaschine.work.WannaPlay;
 import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Service
 public class Controller {
     private Executable currentThread;
     private Thread thread;
-    private boolean alreadyPlaying = false;
 
     @Autowired
     private PeerRepository repo;
@@ -25,13 +28,38 @@ public class Controller {
     @Autowired
     private Config config;
 
+    public void start() {
+        changeCurrentWork(new FindAnyPeer(config, repo, this));
+    }
+
+    public void changeState() {
+        this.interrupt();
+        if (this.currentThread instanceof FindAnyPeer) {
+            WannaPlay executable = new WannaPlay(config.getMyPort(), repo, this);
+            changeCurrentWork(executable);
+        }
+    }
+
+    public void startGame(boolean first, int port) {
+        this.interrupt();
+        changeCurrentWork(new Play(first, port, this));
+    }
+
+    public void waitForGame() {
+        this.interrupt();
+        currentThread = null;
+        System.out.println("in wait for game");
+        WannaPlay executable = new WannaPlay(config.getMyPort(), repo, this);
+        System.out.println("wanna play created");
+        changeCurrentWork(executable);
+    }
+
     public boolean changeCurrentWork(Executable executable) {
         if (currentThread == null || currentThread.interruptable()) {
             interrupt();
             this.currentThread = executable;
             this.thread = new Thread(this.currentThread);
             this.thread.start();
-            this.alreadyPlaying = this.currentThread instanceof Play;
 
             return true;
         }
@@ -39,7 +67,6 @@ public class Controller {
     }
 
     public void gameDone(boolean haveIWon, int port){
-        this.alreadyPlaying = false;
         System.out.println("You have" + (haveIWon? " " : " not ") + "won.");
         System.out.println("Exchanging Ranking Information...");
         if(!haveIWon) {
@@ -62,16 +89,6 @@ public class Controller {
 
             this.repo.getPeerList().forEach(System.out::println);
         }
-
-        //this.interrupt();
-/*
-        List<Integer> nextPeersToPlay = repo.getNextPeersToPlay(1);
-        if (!nextPeersToPlay.isEmpty()) {
-            WannaPlay executable = new WannaPlay(nextPeersToPlay.get(0), config.getMyPort(), repo);
-            this.changeCurrentWork(executable);
-            System.out.println("before wait completion");
-            this.waitCompletion();
-        }*/
     }
 
     public Thread getThread() {
@@ -83,7 +100,7 @@ public class Controller {
     }
 
     public void waitCompletion(){
-        while (this.getThread().isAlive()) {
+        while (this.getThread() != null && this.getThread().isAlive()) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -98,7 +115,7 @@ public class Controller {
     }
 
     public boolean isAlreadyPlaying() {
-        return this.alreadyPlaying;
+        return this.currentThread instanceof Play;
     }
 
 }

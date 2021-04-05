@@ -264,4 +264,9 @@ public class GameField implements GameInterface {
         System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
         controller.gameDone(this.player.toString().equals(latestConsecutiveSquareState.toString()), this.port);
     }
+
+    public void end() {
+        System.out.println("end game weit for new...");
+        this.controller.waitForGame();
+    }
 }

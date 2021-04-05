@@ -84,6 +84,7 @@ public class Connect4Gui extends JFrame {
 
         if(a == a) {
             this.dispose();
+            this.game.end();
         }
 
     }

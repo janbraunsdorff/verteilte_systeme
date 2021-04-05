@@ -35,9 +35,9 @@ public class PeerRepository {
     }
 
     public void addPeer(Peer peer) {
-        if (Arrays.toString(config.getKeyPair().getPublic().getEncoded()).equals(Arrays.toString(peer.getPublicKey()))){
+        /*if (Arrays.toString(config.getKeyPair().getPublic().getEncoded()).equals(Arrays.toString(peer.getPublicKey()))){
             return;
-        }
+        }*/
 
         Optional<Peer> dbPeer = this.repository.findByPublicKey(peer.getPublicKey());
         if (dbPeer.isEmpty()){
@@ -66,6 +66,7 @@ public class PeerRepository {
                 .stream()
                 .limit(numberOfPeersToAsk)
                 .map(Peer::getPort)
+                .filter( p -> p != config.getMyPort())
                 .collect(Collectors.toList());
     }
 }

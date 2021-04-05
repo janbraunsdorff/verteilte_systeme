@@ -47,8 +47,7 @@ public class PreGameController {
         String input = System.console().readLine();
 
         if(input.equals("y")) {
-            this.controller.interrupt();
-            this.controller.changeCurrentWork(new Play(false, exchange.getPort(), controller));
+            this.controller.startGame(false, exchange.getPort());
             return true;
         }
 

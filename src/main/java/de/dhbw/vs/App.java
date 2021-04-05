@@ -23,23 +23,9 @@ public class App {
 
 
     @Bean
-    public CommandLineRunner commandLineRunner(Controller controller, Config config, PeerRepository repo) throws Exception {
+    public CommandLineRunner commandLineRunner(Controller controller) throws Exception {
         return args -> {
-            controller.changeCurrentWork(new FindAnyPeer(config, repo));
-            controller.waitCompletion();
-
-            // find player and play
-            List<Integer> nextPeersToPlay = repo.getNextPeersToPlay(1);
-            if (!nextPeersToPlay.isEmpty()) {
-                WannaPlay executable = new WannaPlay(nextPeersToPlay.get(0), config.getMyPort(), repo);
-                controller.changeCurrentWork(executable);
-                controller.waitCompletion();
-
-                if (executable.getResponse()) {
-                    controller.changeCurrentWork(new Play(true, nextPeersToPlay.get(0), controller));
-                    controller.waitCompletion();
-                }
-            }
+            controller.start();
         };
 
     }
