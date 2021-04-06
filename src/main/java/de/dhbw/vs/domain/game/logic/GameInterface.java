@@ -7,4 +7,5 @@ public interface GameInterface {
     void executeExternMove(Move move);
     void executeInternMove(Move move);
     boolean moveIsPossible(Move move);
+    void end();
 }

@@ -32,18 +32,22 @@ public class PreGameController {
     public PeerList isOnline(@RequestBody HelloExchange exchange){
         this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now(), exchange.getPublicKey()));
         this.repo.addPeer(exchange.getPeers());
+        System.out.println("Got online request from: " + exchange.getPort());
         return new PeerList(this.repo.getPeerList(), config.getKeyPair().getPublic().getEncoded());
     }
 
 
     @PostMapping("/wannaPlay")
     public boolean wannaPlay(@RequestBody WannaPlayExchange exchange) throws Exception {
+        if(controller.isAlreadyPlaying()) {
+            return false;
+        }
+
         System.out.println("Got ask from "+ exchange.getPort()+ " [y/n]: ");
         String input = System.console().readLine();
 
         if(input.equals("y")) {
-            this.controller.interrupt();
-            this.controller.changeCurrentWork(new Play(false, exchange.getPort(), controller));
+            this.controller.startGame(false, exchange.getPort());
             return true;
         }
 

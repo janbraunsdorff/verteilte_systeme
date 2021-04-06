@@ -3,6 +3,7 @@ package de.dhbw.vs.domain.statemaschine.work;
 import de.dhbw.vs.Config;
 import de.dhbw.vs.api.model.HelloExchange;
 import de.dhbw.vs.api.model.PeerList;
+import de.dhbw.vs.domain.statemaschine.Controller;
 import de.dhbw.vs.domain.statemaschine.Executable;
 import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
@@ -18,13 +19,15 @@ public class FindAnyPeer implements Executable {
 
     private final Config config;
     private final PeerRepository repo;
+    private final Controller controller;
     private boolean hasToInterrupt;
 
 
-    public FindAnyPeer(Config config, PeerRepository repository) {
+    public FindAnyPeer(Config config, PeerRepository repository, Controller controller) {
         this.config = config;
         this.repo = repository;
         this.hasToInterrupt = false;
+        this.controller = controller;
     }
 
     @Override
@@ -41,6 +44,7 @@ public class FindAnyPeer implements Executable {
     public void run() {
         if (!repo.getPeerList().isEmpty() || hasToInterrupt){
             this.repo.getPeerList().forEach(System.out::println);
+            this.controller.changeState();
             return;
         }
         System.out.println("Find Any partner");
@@ -69,5 +73,6 @@ public class FindAnyPeer implements Executable {
             }
 
         }
+        this.controller.changeState();
     }
 }

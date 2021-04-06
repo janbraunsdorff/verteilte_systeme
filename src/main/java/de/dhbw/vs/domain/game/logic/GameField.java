@@ -16,8 +16,9 @@ public class GameField implements GameInterface {
     private final Connect4Gui gui;
     private Status status;
     private final Controller controller;
+    private int port;
 
-    public GameField(NetworkInterface network, boolean isBeginningPlayer, Controller controller) {
+    public GameField(NetworkInterface network, boolean isBeginningPlayer, Controller controller, int port) {
         this.controller = controller;
         for (Square[] col : field) {
             for (int row = 0; row < col.length; row++) {
@@ -28,6 +29,7 @@ public class GameField implements GameInterface {
         this.player = isBeginningPlayer ? Player.YELLOW : Player.RED;
         this.status = isBeginningPlayer ? Status.ACTIVE : Status.WAITING;
         this.gui = new Connect4Gui(this);
+        this.port = port;
     }
 
     @Override
@@ -260,6 +262,10 @@ public class GameField implements GameInterface {
         status = Status.TERMINATED;
         new Thread(() ->{gui.displayWinner(winningSquares);}).start();
         System.out.println("Player " + latestConsecutiveSquareState.toString() + " has won!");
-        controller.gameDone();
+        controller.gameDone(this.player.toString().equals(latestConsecutiveSquareState.toString()), this.port);
+    }
+
+    public void end() {
+        this.controller.endGameAndWaitForNew();
     }
 }

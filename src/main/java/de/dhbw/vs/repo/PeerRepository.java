@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,17 +22,24 @@ public class PeerRepository {
         this.repository = repository;
     }
 
+    public void increasePeerRanking(int port) {
+        var dbPeer = this.repository.findByPort(port);
+        if (dbPeer.isPresent()){
+            dbPeer.get().increaseRanking();
+            this.repository.save(dbPeer.get());
+        }
+    }
 
     public void addPeer(List<Peer> peers) {
         peers.forEach(this::addPeer);
     }
 
     public void addPeer(Peer peer) {
-        if (Arrays.toString(config.getKeyPair().getPublic().getEncoded()).equals(Arrays.toString(peer.getPublicKey()))){
+        /*if (Arrays.toString(config.getKeyPair().getPublic().getEncoded()).equals(Arrays.toString(peer.getPublicKey()))){
             return;
-        }
+        }*/
 
-        var dbPeer = this.repository.findByPublicKey(peer.getPublicKey());
+        Optional<Peer> dbPeer = this.repository.findByPublicKey(peer.getPublicKey());
         if (dbPeer.isEmpty()){
             this.repository.save(peer);
             return;
@@ -42,8 +50,11 @@ public class PeerRepository {
             dbPeer.get().setDeleted(peer.isDeleted());
             dbPeer.get().setLastUpdated(peer.getLastUpdated());
         }
+        if(dbPeer.get().getRanking() < peer.getRanking()) {
+            dbPeer.get().setRanking(peer.getRanking());
+        }
 
-        this.repository.save(peer);
+        this.repository.save(dbPeer.get());
     }
 
     public List<Peer> getPeerList() {
@@ -53,9 +64,9 @@ public class PeerRepository {
     public List<Integer> getNextPeersToPlay(int numberOfPeersToAsk) {
         return ((List<Peer>) this.repository.findAll())
                 .stream()
-                .filter(a -> a.getPort() < myPort)
                 .limit(numberOfPeersToAsk)
                 .map(Peer::getPort)
+                .filter( p -> p != config.getMyPort())
                 .collect(Collectors.toList());
     }
 }

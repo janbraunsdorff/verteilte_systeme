@@ -9,11 +9,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-public class Play  implements Executable, NetworkInterface {
+public class Play implements Executable, NetworkInterface {
 
     private final boolean isFirst;
     private GameField game;
-    private int portNumber;
+    private final int portNumber;
     private final Controller controller;
 
     public Play(boolean isFirst, int port, Controller controller) {
@@ -29,14 +29,13 @@ public class Play  implements Executable, NetworkInterface {
 
     @Override
     public void interrupt() {
-        this.game.destroy();
         this.game = null;
     }
 
     @Override
     public void run() {
         System.out.println("I am " + (isFirst ? "first" : "second") + " and i send to " + portNumber);
-        this.game = new GameField(this, isFirst, controller);
+        this.game = new GameField(this, isFirst, controller, portNumber);
     }
 
     public void executeMove(Move move) {
