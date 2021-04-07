@@ -13,7 +13,7 @@ public class Play implements Executable, NetworkInterface {
 
     private final boolean isFirst;
     private GameField game;
-    private int portNumber;
+    private final int portNumber;
     private final Controller controller;
 
     public Play(boolean isFirst, int port, Controller controller) {

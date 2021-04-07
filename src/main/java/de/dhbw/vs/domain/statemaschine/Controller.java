@@ -27,6 +27,7 @@ public class Controller {
     private Config config;
 
     public void start() {
+        this.interrupt();
         changeCurrentWork(new FindAnyPeer(config, repo, this));
     }
 

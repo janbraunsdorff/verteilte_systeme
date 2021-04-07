@@ -1,5 +1,6 @@
 package de.dhbw.vs;
 
+import de.dhbw.vs.domain.crypto.Cryptop;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
@@ -12,9 +13,11 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 
 @Configuration
 public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
@@ -61,8 +64,10 @@ public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerF
 
     @Override
     public void customize(ConfigurableWebServerFactory factory) {
+        checkIfKeyIsPresentOrGenrate();
         byte encoded = sum(this.getKeyPair().getPublic().getEncoded());
-        int keyPort = encoded % 255;
+        int encodedInt = Math.abs(encoded);
+        int keyPort = encodedInt % 255;
         this.myPort = keyPort + fromPort;
 
         while (isPresent(myPort)) {
@@ -72,6 +77,20 @@ public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerF
 
         System.out.println("Starting Peer on port: " + myPort);
         factory.setPort(myPort);
+    }
+
+    private void checkIfKeyIsPresentOrGenrate() {
+        if (Files.exists(Path.of(keyPath))) {
+            return;
+        }
+        try {
+            Cryptop c = new Cryptop();
+            FileOutputStream fout = new FileOutputStream(keyPath);
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(c.getKeys());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean isPresent(int port) {

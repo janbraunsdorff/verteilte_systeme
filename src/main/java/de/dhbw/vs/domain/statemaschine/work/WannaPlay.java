@@ -1,11 +1,8 @@
 package de.dhbw.vs.domain.statemaschine.work;
 
-import de.dhbw.vs.api.model.HelloExchange;
-import de.dhbw.vs.api.model.PeerList;
 import de.dhbw.vs.api.model.WannaPlayExchange;
 import de.dhbw.vs.domain.statemaschine.Controller;
 import de.dhbw.vs.domain.statemaschine.Executable;
-import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +16,6 @@ public class WannaPlay implements Executable {
     private final int myPort;
     private final PeerRepository repo;
     private final Controller controller;
-    private boolean ready;
 
     public WannaPlay(int myPort, PeerRepository repo, Controller controller) {
         this.myPort = myPort;
@@ -41,8 +37,18 @@ public class WannaPlay implements Executable {
     public void run() {
         while(true) {
             List<Integer> nextPeersToPlay = repo.getNextPeersToPlay(1);
-            int port = nextPeersToPlay.get(0);
 
+            if(nextPeersToPlay.isEmpty()) {
+                System.out.println("There are no peers to play with");
+                System.out.println("Press s to search again for peers");
+                String input = System.console().readLine();
+                if(input.equals("s")) {
+                    controller.start();
+                    return;
+                }
+            }
+
+            int port = nextPeersToPlay.get(0);
             System.out.println("Press p to ask other players for a game, press r to view ranking: ");
             String input = System.console().readLine();
 
@@ -56,25 +62,17 @@ public class WannaPlay implements Executable {
                     ResponseEntity<Boolean> response = restTemplate.postForEntity(url, request, Boolean.class);
                     System.out.println(response.getStatusCode() + "   " + response.getBody());
                     if (response.getBody()) {
-                        this.ready = response.getBody();
-                        if(this.ready) {
-                            controller.startGame(true, port);
-                        }
+                        controller.startGame(true, port);
                         return;
                     }
                 } catch (RestClientException ex) {
                     System.out.println("no reachable");
+                    repo.setPeerToDeleted(port);
                 }
-
-                this.ready = false;
 
             } else if (input.equals("r")) {
                 this.repo.getPeerList().forEach(p -> System.out.println(p.rankingInfo()));
             }
         }
-    }
-
-    public Boolean getResponse() {
-        return ready;
     }
 }
