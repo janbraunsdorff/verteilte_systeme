@@ -59,6 +59,7 @@ public class WannaPlay implements Executable {
                     }
                 } catch (RestClientException ex) {
                     System.out.println("no reachable");
+                    repo.setPeerToDeleted(port);
                 }
 
             } else if (input.equals("r")) {
