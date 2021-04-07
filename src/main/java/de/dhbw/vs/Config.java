@@ -66,7 +66,8 @@ public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerF
     public void customize(ConfigurableWebServerFactory factory) {
         checkIfKeyIsPresentOrGenrate();
         byte encoded = sum(this.getKeyPair().getPublic().getEncoded());
-        int keyPort = encoded % 255;
+        int encodedInt = Math.abs(encoded);
+        int keyPort = encodedInt % 255;
         this.myPort = keyPort + fromPort;
 
         while (isPresent(myPort)) {
