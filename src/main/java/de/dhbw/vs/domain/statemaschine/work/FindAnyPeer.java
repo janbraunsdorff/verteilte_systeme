@@ -42,7 +42,7 @@ public class FindAnyPeer implements Executable {
 
     @Override
     public void run() {
-        if (!repo.getPeerList().isEmpty() || hasToInterrupt){
+        if (!repo.getNextPeersToPlay(1).isEmpty() || hasToInterrupt){
             this.repo.getPeerList().forEach(System.out::println);
             this.controller.changeState();
             return;

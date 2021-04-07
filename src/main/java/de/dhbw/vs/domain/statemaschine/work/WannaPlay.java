@@ -44,8 +44,8 @@ public class WannaPlay implements Executable {
                 String input = System.console().readLine();
                 if(input.equals("s")) {
                     controller.start();
+                    return;
                 }
-                continue;
             }
 
             int port = nextPeersToPlay.get(0);
