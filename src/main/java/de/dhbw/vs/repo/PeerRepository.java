@@ -35,10 +35,6 @@ public class PeerRepository {
     }
 
     public void addPeer(Peer peer) {
-        /*if (Arrays.toString(config.getKeyPair().getPublic().getEncoded()).equals(Arrays.toString(peer.getPublicKey()))){
-            return;
-        }*/
-
         Optional<Peer> dbPeer = this.repository.findByPublicKey(peer.getPublicKey());
         if (dbPeer.isEmpty()){
             this.repository.save(peer);
@@ -62,11 +58,20 @@ public class PeerRepository {
     }
 
     public List<Integer> getNextPeersToPlay(int numberOfPeersToAsk) {
-        return ((List<Peer>) this.repository.findAll())
+        return  ((List<Peer>) this.repository.findAll())
                 .stream()
-                .limit(numberOfPeersToAsk)
+                .filter(p -> !p.isDeleted())
                 .map(Peer::getPort)
                 .filter( p -> p != config.getMyPort())
+                .limit(numberOfPeersToAsk)
                 .collect(Collectors.toList());
+    }
+
+    public void setPeerToDeleted(int port) {
+        Optional<Peer> p = repository.findByPort(port);
+        if(p.isPresent()) {
+            Peer peer = p.get().delete();
+            repository.save(peer);
+        }
     }
 }
