@@ -37,8 +37,18 @@ public class WannaPlay implements Executable {
     public void run() {
         while(true) {
             List<Integer> nextPeersToPlay = repo.getNextPeersToPlay(1);
-            int port = nextPeersToPlay.get(0);
 
+            if(nextPeersToPlay.isEmpty()) {
+                System.out.println("There are no peers to play with");
+                System.out.println("Press s to search again for peers");
+                String input = System.console().readLine();
+                if(input.equals("s")) {
+                    controller.start();
+                }
+                continue;
+            }
+
+            int port = nextPeersToPlay.get(0);
             System.out.println("Press p to ask other players for a game, press r to view ranking: ");
             String input = System.console().readLine();
 
@@ -52,9 +62,7 @@ public class WannaPlay implements Executable {
                     ResponseEntity<Boolean> response = restTemplate.postForEntity(url, request, Boolean.class);
                     System.out.println(response.getStatusCode() + "   " + response.getBody());
                     if (response.getBody()) {
-                        if(response.getBody()) {
-                            controller.startGame(true, port);
-                        }
+                        controller.startGame(true, port);
                         return;
                     }
                 } catch (RestClientException ex) {
