@@ -47,9 +47,11 @@ public class FindAnyPeer implements Executable {
             this.controller.changeState();
             return;
         }
+
         System.out.println("Find Any partner");
         for (int portNumber = config.getFromPort(); portNumber <= config.getToPort(); portNumber++) {
-            if (portNumber == config.getMyPort()) continue;
+            if (portNumber == config.getMyPort())
+                continue;
 
             RestTemplate restTemplate = new RestTemplate();
             String url = "http://localhost:" + portNumber + "/online";
@@ -62,14 +64,10 @@ public class FindAnyPeer implements Executable {
                 this.repo.addPeer(new Peer(portNumber, LocalDateTime.now(), response.getBody().getPublicKey()));
                 System.out.println(response.getStatusCode() + "   " + response.getBody());
                 this.repo.getPeerList().forEach(System.out::println);
+                this.controller.changeState();
                 return;
             } catch (RestClientException ex) {
                 System.out.println("---");
-            }
-
-            if (!repo.getPeerList().isEmpty() || hasToInterrupt){
-                this.repo.getPeerList().forEach(System.out::println);
-                return;
             }
 
         }
