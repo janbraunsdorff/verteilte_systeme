@@ -46,6 +46,7 @@ public class WannaPlay implements Executable {
                     controller.start();
                     return;
                 }
+                continue;
             }
 
             int port = nextPeersToPlay.get(0);
