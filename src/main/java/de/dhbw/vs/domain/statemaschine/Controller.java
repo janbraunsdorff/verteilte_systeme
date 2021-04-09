@@ -37,10 +37,8 @@ public class Controller {
 
     public void changeState() {
         this.interrupt();
-        if (this.currentThread instanceof FindAnyPeer) {
-            WannaPlay executable = new WannaPlay(config.getMyPort(), repo, this);
-            changeCurrentWork(executable);
-        }
+        WannaPlay executable = new WannaPlay(config.getMyPort(), repo, this);
+        changeCurrentWork(executable);
     }
 
     public void startGame(boolean first, int port) {
