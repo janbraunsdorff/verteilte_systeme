@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+
 @Service
 public class Controller {
     private Executable currentThread;
@@ -39,7 +43,13 @@ public class Controller {
 
     public void startGame(boolean first, int port) {
         this.interrupt();
-        changeCurrentWork(new Play(first, port, this));
+        try {
+            PublicKey key = repo.getPublicKeyByPort(port);
+            changeCurrentWork(new Play(first, port, this, config.getCrypto(), key));
+        } catch (Exception e) {
+
+        }
+
     }
 
     public void endGameAndWaitForNew() {

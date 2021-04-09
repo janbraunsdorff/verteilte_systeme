@@ -61,6 +61,10 @@ public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerF
         return null;
     }
 
+    public Cryptop getCrypto(){
+        return new Cryptop(getKeyPair());
+    }
+
 
     @Override
     public void customize(ConfigurableWebServerFactory factory) {

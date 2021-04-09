@@ -22,16 +22,28 @@ public class Cryptop {
         this.keys = kpg.genKeyPair();
     }
 
-    public byte[] sign(String msg) throws Exception {
-        Signature sig = Signature.getInstance("SHA1WithRSA");
-        sig.initSign(keys.getPrivate());
-        sig.update(msg.getBytes(StandardCharsets.UTF_8));
-        return sig.sign();
+    public byte[] sign(String msg) {
+        try {
+            Signature sig = Signature.getInstance("SHA1WithRSA");
+            sig.initSign(keys.getPrivate());
+            sig.update(msg.getBytes(StandardCharsets.UTF_8));
+            return sig.sign();
+        }catch (Exception ex) {
+            throw new RuntimeException("Unable to sign");
+        }
     }
 
     public boolean validate(String msg, byte[] signature) throws Exception{
         Signature sig = Signature.getInstance("SHA1WithRSA");
         sig.initVerify(keys.getPublic());
+        sig.update(msg.getBytes(StandardCharsets.UTF_8));
+
+        return sig.verify(signature);
+    }
+
+    public static boolean validate(String msg, byte[] signature, PublicKey key) throws Exception{
+        Signature sig = Signature.getInstance("SHA1WithRSA");
+        sig.initVerify(key);
         sig.update(msg.getBytes(StandardCharsets.UTF_8));
 
         return sig.verify(signature);

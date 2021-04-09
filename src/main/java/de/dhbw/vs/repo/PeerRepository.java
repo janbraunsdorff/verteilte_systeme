@@ -4,6 +4,11 @@ import de.dhbw.vs.Config;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -73,5 +78,16 @@ public class PeerRepository {
             Peer peer = p.get().delete();
             repository.save(peer);
         }
+    }
+
+    public PublicKey getPublicKeyByPort(int port) throws NoSuchAlgorithmException, InvalidKeySpecException {
+       var keyBytes =  ((List<Peer>) this.repository.findAll())
+                .stream()
+                .filter(p -> p.getPort() == port)
+                .findFirst().get().getPublicKey();
+
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePublic(spec);
     }
 }

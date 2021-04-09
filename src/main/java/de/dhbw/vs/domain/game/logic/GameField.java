@@ -1,10 +1,12 @@
 package de.dhbw.vs.domain.game.logic;
 
+import de.dhbw.vs.domain.crypto.Cryptop;
 import de.dhbw.vs.domain.game.gui.Connect4Gui;
 import de.dhbw.vs.domain.game.network.NetworkInterface;
 import de.dhbw.vs.domain.statemaschine.Controller;
 
 import java.awt.event.WindowEvent;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +18,14 @@ public class GameField implements GameInterface {
     private final Connect4Gui gui;
     private Status status;
     private final Controller controller;
+    private final Cryptop cryptop;
+    private final PublicKey key;
     private int port;
 
-    public GameField(NetworkInterface network, boolean isBeginningPlayer, Controller controller, int port) {
+    public GameField(NetworkInterface network, boolean isBeginningPlayer, Controller controller, int port, Cryptop cryptop, PublicKey key) {
         this.controller = controller;
+        this.cryptop = cryptop;
+        this.key = key;
         for (Square[] col : field) {
             for (int row = 0; row < col.length; row++) {
                 col[row] = new Square();
@@ -28,7 +34,7 @@ public class GameField implements GameInterface {
         this.network = network;
         this.player = isBeginningPlayer ? Player.YELLOW : Player.RED;
         this.status = isBeginningPlayer ? Status.ACTIVE : Status.WAITING;
-        this.gui = new Connect4Gui(this);
+        this.gui = new Connect4Gui(this, cryptop);
         this.port = port;
     }
 
@@ -44,6 +50,17 @@ public class GameField implements GameInterface {
     public void executeExternMove(Move move) {
         if (status.equals(Status.ACTIVE) || status.equals(Status.TERMINATED))
             return;
+
+
+        // check move signiture
+        try {
+            if (!Cryptop.validate("column" + move.getColumnNumber(), move.getSignature(), key)){
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
         executeMove(move);
 
