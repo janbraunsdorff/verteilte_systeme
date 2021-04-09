@@ -1,5 +1,6 @@
 package de.dhbw.vs.domain.game.gui;
 
+import de.dhbw.vs.domain.crypto.Cryptop;
 import de.dhbw.vs.domain.game.logic.GameInterface;
 import de.dhbw.vs.domain.game.logic.Move;
 import de.dhbw.vs.domain.game.logic.Square;
@@ -12,9 +13,11 @@ public class Connect4Gui extends JFrame {
     private final GameInterface game;
     private final JLabel stateText = new JLabel();
     private final JPanel[][] gameField = new JPanel[7][6];
+    private final Cryptop crpyto;
 
-    public Connect4Gui(GameInterface game) {
+    public Connect4Gui(GameInterface game, Cryptop crypto) {
         this.game = game;
+        this.crpyto = crypto;
         init();
     }
 
@@ -55,7 +58,7 @@ public class Connect4Gui extends JFrame {
     }
 
     private void insertDisc(int column) {
-        Move move = new Move(column);
+        Move move = new Move(column, crpyto.sign("column" + column));
         if (game.moveIsPossible(move))
             this.game.executeInternMove(move);
     }
