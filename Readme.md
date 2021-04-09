@@ -1,45 +1,31 @@
-# Anforderungen
-- Einstieg 
-  - Suche im Beriech 1050 bis 1100 bis du einen gefunden hast
-  - Tausche alle Bekannten Nachbarn aus
-  - Routing Tabllen -> wenn ich zu Alice will, wenn muss ich anschreiben, damit er die Nachricht an Alice weiterleitet
-                       oder man bekommt den Port zum direkten Anfragen
-  - ID über Public Key
-- Suche 
-  - Suche nach Peer mit hilfe von Public Key oder Hash vom Key 
-- Inhalte verbreiten
-  - Vier Augengespräch, welches von anderne Peers weitergeleitet wird
-  - entweder direktes Rooting oder über andere Peers weiterleiten
-- Kommunikation
- - Austausch der Rooting Tabellen
- - Austausch der Spielstände
+# Einstieg:
+- Jeder Spiele benötigt ein Public / Private Key aus dem RSA verfahren.
+- Die Bytes vom Public Key werden aufsummiert und der Betrag gebildet. Danach wird die Summe Modulo 255 gerechnet.
+- Der Einstieg ist ab Port 1050. Der eigene Port wird addiert auf den Basis Port. 
+- Ist dieser Besetzt wird der eigene Port mit  7 addiert. Bis der Port frei ist.
 
 
-# Peer A Sicht
-1. Finde einen Typen von Port 1050 bi 1100
-2. Tausche Tabelle zum rooting
-3. Spiele ein Spiel  
-   3.a Fange an mit ersten Zug, singieren den Zug, Schicke an B  
-   3.b B führ den Zug bei sich aus, macht einen neuen Zug, signiert ihn, Schickt ihn an A  
-   3.c A führ den Zug bei sich aus, macht einen neuen Zug, signiert ihn, Schickt ihn an B
-   3.d weiter mit 3.d bis ein Sieger oder ein remi feststeht
-4. Nach dem es Gespielt wurde, schicken alle es an alle bekannten im Netz zur Speicherung ( Verteilter Highscore)  
-   Man selber hat nur die Anzahl der gewonnen spiele und die Spiele der bekannten Knoten
-5. Suche nach neunem Partner an Hand des Hashes oder Port incremnt
-
-# Peer B Sicht
-1. B wird angeschrieben mit Routing Tabellen
-2. B schickt seine Routing Tabelle zurück
-3. Warten auf ersten Zug von A
-4. Anworten auf den Zug A so lange bis ein sieger / remi feststeht
-5. An alle Bakannten das Ergebnis schicken
+# Cold Start
+- Kein Spieler ist Bekannt. Der Spieler geht jeden Port durch, bis er einen gefunden hat.
+- Beim Hello werden alle bekannten Spieler mit Ranking, Port und Public Key ausgetauscht.
+- Der Spieler kann entscheiden, ob er einen Partner zum Spielen suchen will oder das Ranking anzeigen
 
 
-# Mögliche Angriffe
-Ein Peer täuscht ein Disconnect vor  
-Ein Peer manipuliert das Ergebnis  
-Bei, Routing über Peers: Nachricht wird nicht weitergeleitet
+# Warm Start
+- Keine Suche wird ausgeführt. Es wird davon ausgegengen, dass die Spieler noch an den Ports existieren
+- Der Spieler kann entscheiden, ob er einen Partner zum Spielen suchen will oder das Ranking anzeigen
 
-HighScoore kann nicht übermittelt werden --> Nur validirung wenn bei das Ergebnis an den selben Peer schicken. Auch dann ist es nicht garantiert
-Nachricht wird angefangen und Verändert --> Geht nicht, da signiert. Es seiden der Public Key wurde schon beim Austauscht verändert
+
+# Spiel
+- Alice fragt an Bob
+- Bob sagt "nein" --> Alice fragt Charlie
+- Bob sagt "ja" --> Alice macht den ersten Zug:
+- Alice weiß, dass Bob mit dem Public Key k1 an Port p1 ist.
+- Alice schickt im Move den Move signiert mit
+- Bob weiß, dass Alice mit dem Public Key k2 an Port p2 ist.
+- Bob checkt die Signatur vom Move
+- Signatur stimmt: Bob macht einen Zug, signiert hin und scickt in an Alice
+- Signatur stimmt nicht: Bob verweigert weitere Züge und sucht sich andere Partner
+- Nach beenden des Spiels werden die aktualisierten Rankings an alle Spieler verteilt
+- Der Spieler kann entscheiden, ob er einen Partner zum Spielen suchen will oder das Ranking anzeigen
 
