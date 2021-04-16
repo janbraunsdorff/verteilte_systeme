@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 @RestController
 public class PreGameController {
@@ -30,7 +32,7 @@ public class PreGameController {
 
     @PostMapping("/online")
     public PeerList isOnline(@RequestBody HelloExchange exchange){
-        this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now(), exchange.getPublicKey()));
+        this.repo.addPeer(new Peer(exchange.getPort(), LocalDateTime.now(), exchange.getPublicKey(), new HashSet<>()));
         this.repo.addPeer(exchange.getPeers());
         System.out.println("Got online request from: " + exchange.getPort());
         return new PeerList(this.repo.getPeerList(), config.getKeyPair().getPublic().getEncoded());

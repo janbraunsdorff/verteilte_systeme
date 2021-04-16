@@ -5,7 +5,7 @@ public interface GameInterface {
     Player getPlayer();
 
     void executeExternMove(Move move);
-    void executeInternMove(Move move);
-    boolean moveIsPossible(Move move);
+    void executeInternMove(int column);
+    boolean moveIsPossible(int column);
     void end();
 }

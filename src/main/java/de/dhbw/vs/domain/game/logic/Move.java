@@ -1,7 +1,14 @@
 package de.dhbw.vs.domain.game.logic;
 
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Move {
     private int columnNumber;
+
+    @Id
     private byte[] signature;
 
     public Move() {

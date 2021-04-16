@@ -58,9 +58,8 @@ public class Connect4Gui extends JFrame {
     }
 
     private void insertDisc(int column) {
-        Move move = new Move(column, crpyto.sign("column" + column));
-        if (game.moveIsPossible(move))
-            this.game.executeInternMove(move);
+        if (game.moveIsPossible(column))
+            this.game.executeInternMove(column);
     }
 
     public void update(Square[][] field) {

@@ -21,6 +21,7 @@ public class GameField implements GameInterface {
     private final Cryptop cryptop;
     private final PublicKey key;
     private int port;
+    private int last;
 
     public GameField(NetworkInterface network, boolean isBeginningPlayer, Controller controller, int port, Cryptop cryptop, PublicKey key) {
         this.controller = controller;
@@ -36,6 +37,7 @@ public class GameField implements GameInterface {
         this.status = isBeginningPlayer ? Status.ACTIVE : Status.WAITING;
         this.gui = new Connect4Gui(this, cryptop);
         this.port = port;
+        this.last = -1;
     }
 
     @Override
@@ -54,13 +56,16 @@ public class GameField implements GameInterface {
 
         // check move signiture
         try {
-            if (!Cryptop.validate("column" + move.getColumnNumber(), move.getSignature(), key)){
+            System.out.println("Validate: " +  move.getColumnNumber() + " "+ this.last);
+            if (!Cryptop.validate(buildSigntuer(move.getColumnNumber(), this.last), move.getSignature(), key)){
+                // Zug ignore if validation fails
                 return;
             }
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
+        this.last = move.getColumnNumber();
 
         executeMove(move);
 
@@ -70,10 +75,18 @@ public class GameField implements GameInterface {
         checkForWinner();
     }
 
+    private String buildSigntuer(int current, int last) {
+        return "column" + current + "last" + last;
+    }
+
     @Override
-    public void executeInternMove(Move move) {
+    public void executeInternMove(int column) {
         if (status.equals(Status.WAITING) || status.equals(Status.TERMINATED) )
             return;
+
+        System.out.println("Sign: " +  column + " "+ this.last);
+        Move move = new Move(column, cryptop.sign(buildSigntuer(column, this.last) ));
+        this.last = column;
 
         executeMove(move);
 
@@ -100,8 +113,8 @@ public class GameField implements GameInterface {
     }
 
     @Override
-    public boolean moveIsPossible(Move move) {
-        Square[] column = field[move.getColumnNumber()];
+    public boolean moveIsPossible(int move) {
+        Square[] column = field[move];
 
         for (Square square : column) {
             if (square.getSquareState().equals(SquareState.EMPTY))

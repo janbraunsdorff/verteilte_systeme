@@ -13,6 +13,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class FindAnyPeer implements Executable {
@@ -61,7 +63,7 @@ public class FindAnyPeer implements Executable {
                 HttpEntity<HelloExchange> request = new HttpEntity<HelloExchange>(new HelloExchange(config.getMyPort(), config.getKeyPair().getPublic().getEncoded(), this.repo.getPeerList()));
                 ResponseEntity<PeerList> response = restTemplate.postForEntity(url, request, PeerList.class);
                 this.repo.addPeer(Objects.requireNonNull(response.getBody()).getPeerList());
-                this.repo.addPeer(new Peer(portNumber, LocalDateTime.now(), response.getBody().getPublicKey()));
+                this.repo.addPeer(new Peer(portNumber, LocalDateTime.now(), response.getBody().getPublicKey(), new HashSet<>()));
                 System.out.println(response.getStatusCode() + "   " + response.getBody());
                 this.repo.getPeerList().forEach(System.out::println);
                 this.controller.changeState();

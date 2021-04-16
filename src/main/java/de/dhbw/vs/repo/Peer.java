@@ -1,11 +1,11 @@
 package de.dhbw.vs.repo;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -26,12 +26,17 @@ public class Peer {
     @Column(name = "public_key", unique = true)
     private byte[] publicKey;
 
+    @Column(name="ranking_history")
+    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER)
+    public Set<GameHistory> rankingHistories;
+
     public Peer() {
     }
 
-    public Peer(int port, LocalDateTime lastUpdated, byte[] publicKey) {
+    public Peer(int port, LocalDateTime lastUpdated, byte[] publicKey, Set<GameHistory> rankingHistories) {
         this.port = port;
         this.lastUpdated = lastUpdated;
+        this.rankingHistories = rankingHistories;
         this.isDeleted = false;
         this.publicKey = publicKey;
         this.ranking = 0;
@@ -45,11 +50,12 @@ public class Peer {
         this.ranking = ranking;
     }
 
-    private Peer(int port, LocalDateTime lastUpdated, boolean isDeleted, byte[] publicKey) {
+    private Peer(int port, LocalDateTime lastUpdated, boolean isDeleted, byte[] publicKey,  Set<GameHistory> rankingHistories) {
         this.port = port;
         this.lastUpdated = lastUpdated;
         this.isDeleted = isDeleted;
         this.publicKey = publicKey;
+        this.rankingHistories = rankingHistories;
         this.ranking = 0;
     }
 
@@ -86,7 +92,7 @@ public class Peer {
     }
 
     public Peer delete() {
-        return new Peer(port, LocalDateTime.now(), true, publicKey);
+        return new Peer(port, LocalDateTime.now(), true, publicKey, new HashSet<>());
     }
 
     public int getRanking() {
