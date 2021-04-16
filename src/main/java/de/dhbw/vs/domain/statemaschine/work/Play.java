@@ -6,6 +6,8 @@ import de.dhbw.vs.domain.game.logic.Move;
 import de.dhbw.vs.domain.game.network.NetworkInterface;
 import de.dhbw.vs.domain.statemaschine.Controller;
 import de.dhbw.vs.domain.statemaschine.Executable;
+import de.dhbw.vs.repo.PeerRepository;
+import de.dhbw.vs.repo.SpringGameHistoryRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -20,13 +22,17 @@ public class Play implements Executable, NetworkInterface {
     private final Controller controller;
     private final Cryptop cryptop;
     private final PublicKey key;
+    private final PeerRepository repo;
+    private final SpringGameHistoryRepository hrepo;
 
-    public Play(boolean isFirst, int port, Controller controller, Cryptop cryptop, PublicKey key) {
+    public Play(boolean isFirst, int port, Controller controller, Cryptop cryptop, PublicKey key, PeerRepository repo, SpringGameHistoryRepository hrepo) {
         this.isFirst = isFirst;
         this.portNumber = port;
         this.controller = controller;
         this.cryptop = cryptop;
         this.key = key;
+        this.repo = repo;
+        this.hrepo = hrepo;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class Play implements Executable, NetworkInterface {
     @Override
     public void run() {
         System.out.println("I am " + (isFirst ? "first" : "second") + " and i send to " + portNumber);
-        this.game = new GameField(this, isFirst, controller, portNumber, cryptop, key);
+        this.game = new GameField(this, isFirst, controller, portNumber, cryptop, key, repo, hrepo);
     }
 
     public void executeMove(Move move) {

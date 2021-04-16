@@ -8,6 +8,7 @@ import de.dhbw.vs.domain.statemaschine.work.Play;
 import de.dhbw.vs.domain.statemaschine.work.WannaPlay;
 import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
+import de.dhbw.vs.repo.SpringGameHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,9 @@ public class Controller {
     @Autowired
     private Config config;
 
+    @Autowired
+    private SpringGameHistoryRepository hRepo;
+
     public void start() {
         this.interrupt();
         changeCurrentWork(new FindAnyPeer(config, repo, this));
@@ -45,7 +49,7 @@ public class Controller {
         this.interrupt();
         try {
             PublicKey key = repo.getPublicKeyByPort(port);
-            changeCurrentWork(new Play(first, port, this, config.getCrypto(), key));
+            changeCurrentWork(new Play(first, port, this, config.getCrypto(), key, repo, hRepo));
         } catch (Exception e) {
 
         }

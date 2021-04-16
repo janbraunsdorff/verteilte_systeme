@@ -3,6 +3,8 @@ package de.dhbw.vs.repo;
 import de.dhbw.vs.domain.game.logic.Move;
 
 import javax.persistence.*;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Entity
@@ -12,8 +14,9 @@ public class GameHistory {
     private String id;
 
     @Column(name = "moves")
-    @OneToMany( mappedBy = "signature", fetch = FetchType.EAGER)
+    @OneToMany( mappedBy = "signature", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Move> moves;
+
 
     public GameHistory(String id, Set<Move> moves) {
         this.id = id;
@@ -21,7 +24,7 @@ public class GameHistory {
     }
 
     public GameHistory() {
-        this.id = UUID.randomUUID().toString();
+        this.id = String.format("%040x", new BigInteger(1, UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8)));
         this.moves = new HashSet<>();
     }
 
@@ -37,4 +40,6 @@ public class GameHistory {
     public Set<Move> getMoves() {
         return moves;
     }
+
 }
+

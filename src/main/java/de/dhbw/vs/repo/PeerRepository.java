@@ -90,4 +90,12 @@ public class PeerRepository {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePublic(spec);
     }
+
+    public Peer getById(PublicKey key) {
+        return this.repository.findByPublicKey(key.getEncoded()).orElseThrow(IllegalStateException::new);
+    }
+
+    public void save(Peer peer) {
+        this.repository.save(peer);
+    }
 }

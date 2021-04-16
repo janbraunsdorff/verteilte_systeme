@@ -4,7 +4,10 @@ import de.dhbw.vs.domain.statemaschine.Controller;
 import de.dhbw.vs.domain.statemaschine.work.FindAnyPeer;
 import de.dhbw.vs.domain.statemaschine.work.Play;
 import de.dhbw.vs.domain.statemaschine.work.WannaPlay;
+import de.dhbw.vs.repo.GameHistory;
+import de.dhbw.vs.repo.Peer;
 import de.dhbw.vs.repo.PeerRepository;
+import de.dhbw.vs.repo.SpringGameHistoryRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -23,8 +26,9 @@ public class App {
 
 
     @Bean
-    public CommandLineRunner commandLineRunner(Controller controller) {
+    public CommandLineRunner commandLineRunner(Controller controller, SpringGameHistoryRepository hrepo) {
         return args -> {
+
             controller.start();
         };
 

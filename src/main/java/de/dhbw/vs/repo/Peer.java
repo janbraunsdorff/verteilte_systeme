@@ -27,7 +27,7 @@ public class Peer {
     private byte[] publicKey;
 
     @Column(name="ranking_history")
-    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Set<GameHistory> rankingHistories;
 
     public Peer() {
@@ -107,6 +107,7 @@ public class Peer {
         this.ranking++;
         return this.ranking;
     }
+
 
     @Override
     public String toString() {
