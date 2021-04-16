@@ -1,3 +1,9 @@
+# Usage
+```
+./gradlew build
+./p1.sh #p2 für Player 2 #p3 für Player 3
+```
+
 # Anforderungen
 - Einstieg 
   - falls kein aktiver Peer in der Liste der Peers

@@ -31,6 +31,9 @@ public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerF
     @Value("${db.path}")
     private String databasePath;
 
+    @Value("${proof}")
+    private boolean proof;
+
     private int myPort;
 
     public Config() {
