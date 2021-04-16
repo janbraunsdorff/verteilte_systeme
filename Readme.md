@@ -1,6 +1,10 @@
 # Usage
+Einmal:
 ```
 ./gradlew build
+```
+Danach pro Spieler:
+```
 ./p1.sh #p2 für Player 2 #p3 für Player 3
 ```
 
