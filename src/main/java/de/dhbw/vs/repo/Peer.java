@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Set;
 
 
-@Entity
+@Entity(name = "Peer")
+@Table(name = "peer")
 public class Peer {
     @Column(name = "last_port_seen")
     private int port;
@@ -26,8 +27,7 @@ public class Peer {
     @Column(name = "public_key", unique = true)
     private byte[] publicKey;
 
-    @Column(name="ranking_history")
-    @OneToMany(mappedBy = "id", fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     public Set<GameHistory> rankingHistories;
 
     public Peer() {
@@ -48,6 +48,7 @@ public class Peer {
         this.isDeleted = false;
         this.publicKey = publicKey;
         this.ranking = ranking;
+        this.rankingHistories = new HashSet<>();
     }
 
     private Peer(int port, LocalDateTime lastUpdated, boolean isDeleted, byte[] publicKey,  Set<GameHistory> rankingHistories) {
@@ -103,10 +104,15 @@ public class Peer {
         this.ranking = ranking;
     }
 
+    public Set<GameHistory> getRankingHistories() {
+        return rankingHistories;
+    }
+
     public int increaseRanking() {
         this.ranking++;
         return this.ranking;
     }
+
 
     @Override
     public String toString() {
@@ -115,6 +121,7 @@ public class Peer {
                 ", lastUpdated=" + lastUpdated +
                 ", isDeleted=" + isDeleted +
                 ", ranking=" + ranking +
+                ", lengthHistory=" + this.rankingHistories.size() +
                 '}';
     }
 

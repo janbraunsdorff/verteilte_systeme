@@ -4,6 +4,10 @@ import de.dhbw.vs.domain.crypto.Cryptop;
 import de.dhbw.vs.domain.game.gui.Connect4Gui;
 import de.dhbw.vs.domain.game.network.NetworkInterface;
 import de.dhbw.vs.domain.statemaschine.Controller;
+import de.dhbw.vs.repo.GameHistory;
+import de.dhbw.vs.repo.Peer;
+import de.dhbw.vs.repo.PeerRepository;
+import de.dhbw.vs.repo.SpringGameHistoryRepository;
 
 import java.awt.event.WindowEvent;
 import java.security.PublicKey;
@@ -16,17 +20,23 @@ public class GameField implements GameInterface {
     private final NetworkInterface network;
     private final Player player;
     private final Connect4Gui gui;
+    private final Peer peer;
+    private GameHistory history;
     private Status status;
     private final Controller controller;
     private final Cryptop cryptop;
     private final PublicKey key;
+    private final PeerRepository repo;
+    private final SpringGameHistoryRepository hrepo;
     private int port;
     private int last;
 
-    public GameField(NetworkInterface network, boolean isBeginningPlayer, Controller controller, int port, Cryptop cryptop, PublicKey key) {
+    public GameField(NetworkInterface network, boolean isBeginningPlayer, Controller controller, int port, Cryptop cryptop, PublicKey key, PeerRepository repo, SpringGameHistoryRepository hrepo) {
         this.controller = controller;
         this.cryptop = cryptop;
         this.key = key;
+        this.repo = repo;
+        this.hrepo = hrepo;
         for (Square[] col : field) {
             for (int row = 0; row < col.length; row++) {
                 col[row] = new Square();
@@ -38,6 +48,17 @@ public class GameField implements GameInterface {
         this.gui = new Connect4Gui(this, cryptop);
         this.port = port;
         this.last = -1;
+        Move.counter = 0;
+
+
+        this.peer = this.repo.getById(key);
+
+        this.history = new GameHistory();
+        this.peer.getRankingHistories().add(this.history);
+        this.repo.save(this.peer);
+
+        this.history = hrepo.findById(this.history.getId()).orElseThrow(IllegalStateException::new);
+
     }
 
     @Override
@@ -56,8 +77,8 @@ public class GameField implements GameInterface {
 
         // check move signiture
         try {
-            System.out.println("Validate: " +  move.getColumnNumber() + " "+ this.last);
-            if (!Cryptop.validate(buildSigntuer(move.getColumnNumber(), this.last), move.getSignature(), key)){
+            System.out.println("Validate this Column " +  move.getColumnNumber() + " last Move: "+ (this.last == -1?"--":this.last));
+            if (!Cryptop.validate(buildSignature(move.getColumnNumber(), this.last), move.getSignature(), key)){
                 // Zug ignore if validation fails
                 return;
             }
@@ -69,13 +90,16 @@ public class GameField implements GameInterface {
 
         executeMove(move);
 
+        // Inset move
+        insertMoveToHistory(move);
+
         status = Status.ACTIVE;
 
         gui.update(field);
         checkForWinner();
     }
 
-    private String buildSigntuer(int current, int last) {
+    private String buildSignature(int current, int last) {
         return "column" + current + "last" + last;
     }
 
@@ -84,11 +108,12 @@ public class GameField implements GameInterface {
         if (status.equals(Status.WAITING) || status.equals(Status.TERMINATED) )
             return;
 
-        System.out.println("Sign: " +  column + " "+ this.last);
-        Move move = new Move(column, cryptop.sign(buildSigntuer(column, this.last) ));
+        System.out.println("Sign: this Column " + column + " last Move: "+ (this.last == -1?"--":this.last));
+        Move move = new Move(column, cryptop.sign(buildSignature(column, this.last) ));
         this.last = column;
 
         executeMove(move);
+        insertMoveToHistory(move);
 
         status = Status.WAITING;
         network.sendMove(move);
@@ -96,6 +121,14 @@ public class GameField implements GameInterface {
         gui.update(field);
         checkForWinner();
     }
+
+    private void insertMoveToHistory(Move move) {
+        this.history.addMove(move);
+        this.history = this.hrepo.save(this.history);
+        this.history.getMoves().forEach(System.out::print);
+        System.out.println();
+    }
+
 
     private void executeMove(Move move) {
         Square[] column = field[move.getColumnNumber()];
