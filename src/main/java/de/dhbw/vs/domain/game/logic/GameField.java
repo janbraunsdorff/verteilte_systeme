@@ -21,7 +21,7 @@ public class GameField implements GameInterface {
     private final Player player;
     private final Connect4Gui gui;
     private final Peer peer;
-    private GameHistory hisotry;
+    private GameHistory history;
     private Status status;
     private final Controller controller;
     private final Cryptop cryptop;
@@ -53,11 +53,11 @@ public class GameField implements GameInterface {
 
         this.peer = this.repo.getById(key);
 
-        this.hisotry = new GameHistory();
-        this.peer.getRankingHistories().add(this.hisotry);
+        this.history = new GameHistory();
+        this.peer.getRankingHistories().add(this.history);
         this.repo.save(this.peer);
 
-        this.hisotry = hrepo.findById(this.hisotry.getId()).orElseThrow(IllegalStateException::new);
+        this.history = hrepo.findById(this.history.getId()).orElseThrow(IllegalStateException::new);
 
     }
 
@@ -77,8 +77,8 @@ public class GameField implements GameInterface {
 
         // check move signiture
         try {
-            System.out.println("Validate: " +  move.getColumnNumber() + " "+ this.last);
-            if (!Cryptop.validate(buildSigntuer(move.getColumnNumber(), this.last), move.getSignature(), key)){
+            System.out.println("Validate this Column " +  move.getColumnNumber() + " last Move: "+ (this.last == -1?"--":this.last));
+            if (!Cryptop.validate(buildSignature(move.getColumnNumber(), this.last), move.getSignature(), key)){
                 // Zug ignore if validation fails
                 return;
             }
@@ -91,7 +91,7 @@ public class GameField implements GameInterface {
         executeMove(move);
 
         // Inset move
-        insertMoveToHisotry(move);
+        insertMoveToHistory(move);
 
         status = Status.ACTIVE;
 
@@ -99,7 +99,7 @@ public class GameField implements GameInterface {
         checkForWinner();
     }
 
-    private String buildSigntuer(int current, int last) {
+    private String buildSignature(int current, int last) {
         return "column" + current + "last" + last;
     }
 
@@ -108,12 +108,12 @@ public class GameField implements GameInterface {
         if (status.equals(Status.WAITING) || status.equals(Status.TERMINATED) )
             return;
 
-        System.out.println("Sign: " +  column + " "+ this.last);
-        Move move = new Move(column, cryptop.sign(buildSigntuer(column, this.last) ));
+        System.out.println("Sign: this Column " + column + " last Move: "+ (this.last == -1?"--":this.last));
+        Move move = new Move(column, cryptop.sign(buildSignature(column, this.last) ));
         this.last = column;
 
         executeMove(move);
-        insertMoveToHisotry(move);
+        insertMoveToHistory(move);
 
         status = Status.WAITING;
         network.sendMove(move);
@@ -122,10 +122,11 @@ public class GameField implements GameInterface {
         checkForWinner();
     }
 
-    private void insertMoveToHisotry(Move move) {
-        this.hisotry.addMove(move);
-        this.hisotry = this.hrepo.save(this.hisotry);
-        this.hisotry.getMoves().forEach(System.out::println);
+    private void insertMoveToHistory(Move move) {
+        this.history.addMove(move);
+        this.history = this.hrepo.save(this.history);
+        this.history.getMoves().forEach(System.out::print);
+        System.out.println();
     }
 
 

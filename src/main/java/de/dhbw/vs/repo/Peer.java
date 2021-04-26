@@ -121,6 +121,7 @@ public class Peer {
                 ", lastUpdated=" + lastUpdated +
                 ", isDeleted=" + isDeleted +
                 ", ranking=" + ranking +
+                ", lengthHistory=" + this.rankingHistories.size() +
                 '}';
     }
 

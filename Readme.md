@@ -26,6 +26,15 @@ Danach pro Spieler:
     - wird nach einem gewonnenen Spiel hochgezählt
     - nach Ende eines Spiels wird der Spielstand an die Peers in der Liste geschickt
     - auch wenn ein Peer, mal nicht online ist, ist sein Ranking noch gespeichert, da er in der Peerliste nur als nicht da markiert wird, das ranking bleibt und wird auch wieder zueordnet, wenn der Spieler später einen anderen port verwendet, da die zuordnung via public key erfolgt
+    
+- Historie
+    - Speichern von jedem Zug in jedem Speiel zu jedem Player
+    - Startflag zum Ausgeben aller Züge zu Beginn der Anwendung
+    
+- Signaturen
+    - Jeder Zug wird signiert. In der Signatur ist der aktuelle Spielzug, wie auch der vorherige Spielzug abgelegt
+    - Spielzüge können dadruch nur in der selben Reihnfolge (ohne edge cases) entschlüsselt werden.
+    - Implizite Reihnfolge
 
 # Einstieg:
 - Jeder Spiele benötigt ein Public / Private Key aus dem RSA verfahren.

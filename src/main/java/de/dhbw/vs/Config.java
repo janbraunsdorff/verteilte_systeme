@@ -1,6 +1,8 @@
 package de.dhbw.vs;
 
 import de.dhbw.vs.domain.crypto.Cryptop;
+import de.dhbw.vs.repo.PeerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
@@ -35,6 +37,9 @@ public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerF
     private boolean proof;
 
     private int myPort;
+
+    @Autowired
+    PeerRepository repository;
 
     public Config() {
     }
@@ -84,6 +89,17 @@ public class Config implements WebServerFactoryCustomizer<ConfigurableWebServerF
 
         System.out.println("Starting Peer on port: " + myPort);
         factory.setPort(myPort);
+
+        if (this.proof) {
+            System.out.println("Last Games:");
+            repository.getPeerList().forEach(p ->{
+                p.getRankingHistories().forEach(h -> {
+                    String moves = h.getMoves().stream().map(m -> m.toString()).reduce(",", String::concat);
+                    System.out.println("Peer:" + p.getPublicKey() + ", SpielId: " + h.getId() + ", [" + moves + "]");
+                });
+            });
+        }
+
     }
 
     private void checkIfKeyIsPresentOrGenrate() {
