@@ -47,4 +47,20 @@ public class Move {
         return order;
     }
 
+
+    public void setColumnNumber(int columnNumber) {
+        this.columnNumber = columnNumber;
+    }
+
+    public void setSignature(byte[] signature) {
+        this.signature = signature;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public static void setCounter(int counter) {
+        Move.counter = counter;
+    }
 }

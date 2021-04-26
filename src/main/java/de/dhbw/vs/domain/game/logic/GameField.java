@@ -21,7 +21,7 @@ public class GameField implements GameInterface {
     private final Player player;
     private final Connect4Gui gui;
     private final Peer peer;
-    private final GameHistory hisotry;
+    private GameHistory hisotry;
     private Status status;
     private final Controller controller;
     private final Cryptop cryptop;
@@ -54,10 +54,11 @@ public class GameField implements GameInterface {
         this.peer = this.repo.getById(key);
 
         this.hisotry = new GameHistory();
-        this.hrepo.save(this.hisotry);
+        this.peer.getRankingHistories().add(this.hisotry);
+        this.repo.save(this.peer);
 
-        this.peer.rankingHistories.add(hisotry);
-        this.repo.save(peer);
+        this.hisotry = hrepo.findById(this.hisotry.getId()).orElseThrow(IllegalStateException::new);
+
     }
 
     @Override
@@ -122,11 +123,9 @@ public class GameField implements GameInterface {
     }
 
     private void insertMoveToHisotry(Move move) {
-        GameHistory gameHistory = this.hrepo.findById(this.hisotry.getId()).orElseThrow(IllegalStateException::new);
-        gameHistory.addMove(move);
-        this.hrepo.save(gameHistory);
-
-        this.hrepo.findById(this.hisotry.getId()).orElseThrow(IllegalStateException::new).getMoves().forEach(System.out::println);
+        this.hisotry.addMove(move);
+        this.hisotry = this.hrepo.save(this.hisotry);
+        this.hisotry.getMoves().forEach(System.out::println);
     }
 
 
